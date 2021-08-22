@@ -1,0 +1,47 @@
+﻿@model Login
+@{ 
+    var returnUrl = @Context.Request.Query["ReturnUrl"];
+}
+<nav class="navbar navbar-expand-md navbar-dark bg-light border-bottom">
+    <div class="mx-auto">
+        <a class="navbar-brand mx-auto">Patient Appointment System (Admin)</a>
+        
+    </div>
+</nav>
+
+
+<div class="d-flex justify-content-center align-items-center h-100 mt-5">
+
+    <div class="card">
+        <!--header of form-->
+        <div class="card-header text-center font-weight-bold bg-primary text-white">SIGN IN</div>
+       @if (ViewBag.loginErr == "invalid")
+       {
+           <div class="text-center mt-3 text-danger" style="margin-bottom: -20px;">
+            Invalid Credential!
+        </div>}
+    <form id="loginform" class="p-5" method="post" asp-controller="Account" asp-route-returnUrl="@returnUrl"  asp-action="LoginUser">
+
+        <!--username input-->
+        <div style="margin-bottom: 25px" class="form-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            <input asp-for="UserName" id="login-username" type="text" class="form-control" placeholder="username">
+            <span asp-validation-for="UserName" class="text-danger d-block"></span>
+        </div>
+
+        <!--password input-->
+        <div style="margin-bottom: 25px" class="form-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+            <input asp-for="Password" id="login-password" type="password" class="form-control" placeholder="password">
+            <span asp-validation-for="Password" class="text-danger d-block"></span>
+        </div>
+
+        <!--button-->
+        <div style="margin-top:10px" class="form-group">
+            <button id="btn-login" class="btn btn-outline-primary btn-block">LOGIN</button>
+        </div>
+    </form>
+    </div>
+
+</div>
+

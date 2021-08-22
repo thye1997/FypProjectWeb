@@ -1,0 +1,179 @@
+﻿<div class="modal fade request-appt-modal" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content  pt-2 pl-3 pr-3 pb-3" style="overflow-y:auto;">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Appointment</h5>
+                <button type="button" class="close" id="close-reqAppt-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <nav>
+                <div class="nav nav-tabs justify-content-sm-center" id="nav-tab" role="tablist">
+                    <a class="nav-item new-patient nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-new-patient" role="tab" aria-controls="nav-new-patient" aria-selected="true">New Patient</a>
+                    <a class="nav-item existing-patient nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-existing-patient" role="tab" aria-controls="nav-existing-patient" aria-selected="false">Existing</a>
+                </div>
+            </nav>
+            <form class="ApptForm" id="PatientForm" method="get">
+                <div class="tab-content mt-4 general-form" id="nav-tabContent">
+                    <!--new patient-->
+                    <div class="tab-pane fade show active" id="nav-new-patient" role="tabpanel" aria-labelledby="nav-new-patient-tab">
+                        <div class="row mt-2">
+                            <div class="form-group col">
+                                <label for="InputNRIC">NRIC<span style="color:red">*</span></label>
+                                <input type="text" class="form-control" id="InputNRIC" name="nric" placeholder="as per format">
+                            </div>
+                            <div class="form-group col">
+                                <label for="InputFullName">Full Name<span style="color:red">*</span></label>
+                                <input type="text" class="form-control" id="InputFullName" name="fullName" placeholder="Low Chen Thye">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col">
+                                <label for="InputPhoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="InputPhoneNumber" name="phoneNumber" placeholder="018-123456789">
+                            </div>
+                            <div class="form-group col">
+                                <label for="Inputbirthday">Date of Birth</label>
+                                <input type="text" class="form-control" id="Inputbirthday" name="DOB">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col">
+                                <label for="InputGender1">Gender</label>
+                                <select class="custom-select" id="genderSelect" name="Gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--exist patient-->
+                    <div class="exist-patient tab-pane fade show" id="nav-existing-patient" role="tabpanel" aria-labelledby="nav-existing-patient-tab">
+                        <div class="row mt-2">
+                            <div class="form-group col-6">
+                                <label for="InputNRIC">Patient NRIC<span style="color:red">*</span></label>
+                                <input type="text" class="form-control" id="userData" list="userDataList" name="dataListName" placeholder="Patient NRIC" autocomplete="off" />
+                                <datalist id="userDataList">
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="hide-btn additional-info">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Patient Info</h5>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="form-group col">
+                                    <label for="InputNRIC">NRIC</label>
+                                    <input type="text" class="form-control" id="existPatientNRIC" placeholder="NRIC" autocomplete="off" disabled>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="InputNRIC">Name</label>
+                                    <input type="text" class="form-control" id="existPatientName" placeholder="Name" autocomplete="off" disabled>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="form-group col">
+                                    <label for="InputNRIC">Phone Number</label>
+                                    <input type="text" class="form-control" id="existPatientPhone" placeholder="Phone Number" autocomplete="off" disabled>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="InputNRIC">Gender</label>
+                                    <input type="text" class="form-control" id="existPatientGender" placeholder="Gender" autocomplete="off" disabled>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="form-group col-6">
+                                    <label for="InputNRIC">Date of birth</label>
+                                    <input type="text" class="form-control" id="existPatientDOB" placeholder="Date of birth" autocomplete="off" disabled>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    <!--appt type-->
+                    <!--<div class="row mt-2">
+                        <label class="col">Appointment Type<span style="color:red">*</span></label>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col">
+                            <label class="radio-inline"><input type="radio" id="apptTypeRad" value=0 name="apptType">Walk-in</label>
+                            <label class="radio-inline" style="margin-left:8px;"><input type="radio" id="apptTypeRad" value=1 name="apptType">Schedule</label>
+                            <label for="apptType" class="error" style="display:none;"></label>
+                        </div>
+                    </div>-->
+                    <!--appt type end-->
+
+                    <div class="appt-details hide-btn">
+                        <div class="row mt-2">
+                            <div class="form-group col-6">
+                                <label for="existPatientApptDate">Appointment Date<span style="color:red">*</span></label>
+                                <input type="text" class="form-control" id="existPatientApptDate" name="apptDate">
+                            </div>
+
+                        </div>
+                        <div class="row mt-2">
+                            <div class="form-group col">
+                                <label for="timeSlotSelect">Slot<span style="color:red">*</span></label>
+                                <select class="custom-select" id="timeSlotSelect" name="timeSlot" disabled>
+                                    <option value="">Select Slot</option>
+                                    <option value=1>Morning</option>
+                                    <option value=2>Afternoon</option>
+                                    <option value=3>Night</option>
+                                </select>
+                            </div>
+                            <div class="form-group col">
+                                <label for="timeSlotSelect">Time Slot<span style="color:red">*</span></label>
+                                <select class="custom-select" id="ApptTimeSlot" name="timeSlotStart" disabled>
+                                    <option value="">Select Time</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="appt-common-details hide-btn">
+                        <div class="row mt-2">
+                            <div class="form-group col-6">
+                                <label for="serviceSelect">Service<span style="color:red">*</span></label>
+                                <select class="custom-select" id="serviceSelect" name="service">
+                                    <option value="">Select Service</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="form-group col">
+                                <label for="noteArea">Note</label>
+                                <textarea class="form-control" id="noteArea"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="submit-appt-btn">Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>           
+        </div>
+    </div>
+
+     <!--check-in appointment modal-->
+<div class="modal checkIn-appt-modal" tabindex="-1" id="checkIn-appt-dialog" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <form>
+            <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Check-in Appointment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Check-in this appointment?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="CheckInAppt(0)">Check-in</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

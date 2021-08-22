@@ -1,0 +1,65 @@
+﻿@model AppointmentScheduleViewModel
+
+@{
+    AppointmentScheduleViewModel viewModel = Model;
+}
+    <div class="bg-white rounded col-6" id="partial-off-list" style="border-right: 3px solid #f1f1f1;">
+        <div class="card-header text-center font-weight-bold bg-light text-dark head" style="margin:0 -15px;">
+            Time Slot
+            <a class="float-right" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#" id="update-btn" data-toggle="modal" data-target=".timeslot-modal">Edit</a>
+            </div>
+        </div>
+        <div class="alert hide-btn" id="timeslot-alert-message" role="alert" style="margin:0 -15px;">
+            <button type="button" class="close" id="close-alert" onclick="closeMessageFunc($('#timeslot-alert-message'))">
+                <span>&times;</span>
+            </button>
+        </div>
+        @await Html.PartialAsync(SystemData.ViewPagePath.TimeSlotTableView, viewModel)
+    </div>
+
+<div class="modal fade timeslot-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Update TimeSlot</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="timeSlotForm">
+                <div class="row mt-2">
+                    <div class="form-group col-6">
+                        <label for="timeSlotSelect">TimeSlot</label>
+                        <select class="custom-select" id="timeSlotSelect" name="timeSlot">
+                            <option value="">Select Slot</option>
+                            <option value=1>Morning</option>
+                            <option value=2>Afternoon</option>
+                            <option value=3>Night</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2 hide-btn" id="timeslot-time">
+                    <div class="form-group col-6">
+                        <label for="timeSlotSelect">From</label>
+                        <select class="custom-select" id="timeSlotStart" name="timeSlotStart">
+                            <option value="">Select Time</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="timeSlotSelect">To</label>
+                        <select class="custom-select" id="timeSlotEnd" name="timeSlotEnd">
+                            <option value="">Select Time</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="confirm-update-btn">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

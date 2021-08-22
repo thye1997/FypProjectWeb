@@ -1,0 +1,37 @@
+﻿@model AppointmentScheduleViewModel
+
+@{
+    AppointmentScheduleViewModel viewModel = Model;
+}
+<div class="text-center mt-3" id="offDay-table">
+    <div class="table-responsive">
+        <table class="table table-bordered" id="timeSlot-list-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Slot</th>
+                    <th>Start</th>
+                    <th>End</th>
+                </tr>
+            </thead>
+            @if (viewModel.timeSlotList.Count > 0)
+            {
+                @foreach(var slot in viewModel.timeSlotList)
+                {
+                    <tbody id="timeSlotTR-@slot.Id">
+                        <tr id="@slot.Id">
+                            <td id="dayID">@slot.Id</td>
+                            <td>@slot.Slot</td>
+                            <td id="slotStartTD">@slot.Start</td>
+                            <td id="slotEndTD">@slot.End</td>
+                        </tr>
+                    </tbody>
+                }
+            }
+        </table>
+    </div>
+    @if (viewModel.offDayList.Count == 0)
+    {
+        <p>Day not Found.</p>
+    }
+</div>

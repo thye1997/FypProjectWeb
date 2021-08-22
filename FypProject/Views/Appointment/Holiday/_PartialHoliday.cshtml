@@ -1,0 +1,51 @@
+﻿@model AppointmentScheduleViewModel
+
+@{
+    AppointmentScheduleViewModel viewModel = Model;
+}
+
+    <div class="bg-white rounded">
+        <div class="card-header text-center font-weight-bold bg-light text-dark" style="margin:0 -15px;">
+            Special Holiday Schedule
+            <a class="float-right" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target=".sp-holiday-modal">Add</a>
+            </div>
+        </div>
+        <div class="alert hide-btn" id="sp-holiday-alert-message" role="alert" style="margin:0 -15px;">
+            <button type="button" class="close" id="close-alert" onclick="closeMessageFunc($('#sp-holiday-alert-message'))">
+                <span>&times;</span>
+            </button>
+        </div>
+        @await Html.PartialAsync(SystemData.ViewPagePath.HolidayTableView, viewModel)
+    </div>
+
+    <div class="modal fade sp-holiday-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Special Holiday</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="spHolidayForm">
+                    <div class="row mt-2">
+                        <div class="form-group col">
+                            <label for="InputMedHistory">Date</label>
+                            <input type="text" class="form-control" id="HolidayDate" name="spHolidayDate" placeholder="Date" />
+                        </div>
+                        <div class="form-group col">
+                            <label for="InputMedHistory">Description</label>
+                            <input type="text" class="form-control" id="HolidayDesc" name="Description" placeholder="Description" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="add-sp-holiday-btn">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>

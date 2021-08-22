@@ -1,0 +1,355 @@
+﻿@model UserViewModel
+@{
+    UserViewModel userViewModel = Model;
+}
+    <div class="container-fluid mb-5">
+            <div class="card-header text-center font-weight-bold bg-light text-dark" style="margin:0 -15px;">
+                PATIENT Details
+                <a class="float-right" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#" id="edit-btn">Edit</a>
+                </div>
+            </div>
+            <div class="alert hide-btn" id="alert-message" role="alert" style="margin:0 -15px;">
+                <button type="button" class="close" id="close-alert">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <form id="userForm">
+                <div class="p-3">
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="inputEmail3" class="col-sm-3 col-form-label">NRIC:</label>
+                            <input type="text" class="form-control" id="nric" name="nric" placeholder="" value="@userViewModel.user.NRIC" disabled>
+                        </div>
+                        <div class="col">
+                            <label for="inputEmail3" class="col-sm-3 col-form-label">Name:</label>
+                            <input type="text" class="form-control" id="name" name="fullName" value="@userViewModel.user.FullName" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="inputEmail3" class="col-sm-3 col-form-label" style="white-space:nowrap;">Phone Number:</label>
+                            <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="@userViewModel.user.PhoneNumber" disabled>
+                        </div>
+                        <div class="col">
+                            <label for="inputEmail3" class="col-sm-3 col-form-label" style="white-space:nowrap;">Day of Birth:</label>
+                            <input type="date" class="form-control" id="DOB" name="DOB" value="@userViewModel.user.DOB" disabled>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-6">
+
+                            <label for="genderSelect" class="col-sm-3 col-form-label">Gender:</label>
+                            <select class="custom-select" id="genderSelect" name="Gender" disabled>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                            <input class="form-control" id="defaultGender" value="@userViewModel.user.Gender" hidden>
+                        </div>
+                    </div>
+                    <span class="d-block" id="genderErr" style="color:red;"></span>
+                    <div class="form-group row mt-2">
+                        <div class="cancel-btn-div hide-btn">
+                            <button class="btn btn-light" id="cancel-btn">Cancel</button>
+                        </div>
+                        <div class="save-btn-div hide-btn">
+                            <button type="submit" class="btn btn-success" id="save-btn">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            </div>
+            <!--<div class="col-" style="background: #f1f1f1; width:2px;"></div>-->
+            <!--<div class="bg-white rounded col" style="margin-right:-30px;">
+            <div class="card-header text-center font-weight-bold bg-light text-dark" style="margin:0 -15px;">
+                MEDICAL HISTORY
+                @if (User.FindFirst(ClaimTypes.Role).Value == SystemData.Role.Doctor)
+                {
+                    <a class="float-right" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target=".med-history-modal">Add</a>
+                </div>
+                }
+            </div>
+            <div class="alert hide-btn" id="medHistory-alert-message" role="alert" style="margin:0 -15px;">
+                <button type="button" class="close" id="close-alert" onclick="closeMessageFunc($('#medHistory-alert-message'))">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="text-center">
+                <div class="table-responsive p-3" id="patientUser-list-table-div">
+                    <table class="table table-bordered dt-responsive" width="100%" id="medHistory-list-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>-->
+            <div class="mb-5 container-fluid">
+                <div class="card-header text-center font-weight-bold bg-light text-dark" style="margin:0 -15px;">
+                    MEDICAL HISTORY
+                </div>
+                <div class="text-center">
+                    <div class="table-responsive p-3" id="patientUser-list-table-div">
+                        <table class="table table-bordered dt-responsive" width="100%" id="medHistory-list-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date</th>
+                                    <th>Slot</th>
+                                    <th>Service</th>
+                                    <th>Result</th>
+                                    <th>Medical Prescription</th>
+                                    <th>By Doctor</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+        </div>
+        <!--<div class="modal fade med-history-modal" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Medical History</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="medHistoryForm" method="post">
+                    <div class="row mt-2">
+                        <div class="form-group col">
+                            <label for="InputMedHistory">Description</label>
+                            <textarea class="form-control" id="InputMedHistory" name="Description" placeholder="Description"></textarea>
+                        </div>
+                        <input type="text" id="med-history-userId" value="@userViewModel.user.Id" hidden>
+
+                    </div>
+
+                    <span class="text-danger d-block" id="genderErr" style="margin-top:-16px;"></span>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="add-MedHistory-btn">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>-->
+
+        <input type="text" id="id" value="@userViewModel.user.Id" hidden>
+
+        @section Scripts {
+            <script src="~/js/User/formvalidation.js"></script>
+            <script type="text/javascript" src="~/js/User/User.js"></script>
+            <script type="text/javascript" src="~/js/Ajax/ajaxcall.js"></script>
+            <script type="text/javascript">
+
+                var alertMessage = $('#alert-message');
+                var medHisAlertMsg = $('#medHistory-alert-message');
+                var closeBtn = $('#close-alert');
+                var name = $('#name').val();
+                var nric = $('#nric').val();
+                var phoneNum = $('#phoneNumber').val();
+                var userId = $('#id').val();
+                var DOB = $('#DOB').val();
+                var res = { response: null };
+                var table;
+                var defaultGender = $('#defaultGender').val();
+                $(document).ready(function () {
+                    console.log("default gender=>" + defaultGender);
+                    $('#genderSelect option[value=' + defaultGender + ']').attr('selected', 'selected');
+                });
+
+                window.onload = function () {
+                    document.getElementById('userForm').reset();
+                }
+                // button handler
+                cancelBtn.click(function (e) {
+                    e.preventDefault();
+                    $('#userForm').validate().resetForm();
+                    $('#name').val(name);
+                    $('#nric').val(nric);
+                    $('#phoneNumber').val(phoneNum);
+                    $('#DOB').val(DOB);
+                    console.log("default gender=>" + defaultGender);
+                    $('#genderSelect').val(defaultGender);
+                });
+
+                closeBtn.click(function (e) {
+                    e.preventDefault();
+                    $('#app-text').remove();
+                    alertMessage.addClass('hide-btn').removeClass('alert-success');
+                });
+
+
+                $('#genderSelect').change(function (e) {
+                    e.preventDefault();
+                    console.log("gender selected");
+                    $(this).valid();
+                    if ($(this).val() != "") {
+                        $('#genderErr').text("");
+                    }
+                })
+
+                if (userId != null) {
+                    console.log("id is:" + userId);
+                    var path = "User/getMedHistory";
+                    var emptyLabel = "No Medical History Found.";
+                    var count;
+                    var column = [
+                        { "data": "id" },
+                        { "data": "date" },
+                        { "data": "slot" },
+                        { "data": "service" },
+                        { "data": "result" },
+                        {
+                            "data": null,
+                            render: function (obj) {
+                                var formatted = obj.formattedMedicalPrescription;
+                                if (formatted != null) {
+                                    return formatted.replace("/n", "\n");
+                                }
+                                else {
+                                    return null;
+                                }
+                                //var newformatted = formatted.replace("/n", "\n");
+                            }
+
+                        },
+                        { "data": "doctorName" },
+
+
+                    ]
+                    table = $('#medHistory-list-table').DataTable({
+                        "lengthChange": false,
+                        "processing": true, // for show progress bar
+                        "serverSide": true, // for process server side
+                        "filter": true, // this is for disable filter (search box)
+                        "ordering": false,
+                        "scrollX": true,
+                        "pageLength": 5,
+
+                        "ajax": {
+                            "url": "/User/getMedHistory",
+                            "data": { "Id": userId },
+                            "type": "POST",
+                            "datatype": "json",
+                        },
+                        "drawCallback": function (setting) {
+                            // Here the response
+                            var response = setting.json;
+                            console.log(response);
+                        },
+                        columns: [
+                            { "data": "id" },
+                            { "data": "date" },
+                            { "data": "slot" },
+                            { "data": "service" },
+                            { "data": "result" },
+                            {
+                                "data": null,
+                                render: function (obj) {
+                                    var formatted = obj.formattedMedicalPrescription;
+                                    if (formatted != "-") {
+                                        return formatted.replaceAll("/n", '<br>');
+                                    }
+                                    else {
+                                        return "No Medical Prescription Available.";
+                                    }
+                                }
+
+                            },
+                            { "data": "doctorName" },
+
+
+                        ],
+                        "language": {
+                            "emptyTable": emptyLabel,
+                        }
+                    });
+
+                }
+
+                //bring form back to ori data if save data is error
+                var resetForm = () => {
+                    $('#userForm').validate().resetForm();
+                    $('#name').val(name);
+                    $('#nric').val(nric);
+                    $('#phoneNumber').val(phoneNum);
+                    $('#DOB').val(DOB);
+                }
+
+                //form submission
+                $('#userForm').submit(function (e) {
+                    e.preventDefault();
+                    if ($('#userForm').valid()) {
+                        if (isAble == true) {
+                            isAble = false;
+                            btnVisibility();
+                            disableAll();
+                        }
+                        var path = "/User/UpdateDetail";
+                        data = {
+                            Id: $('#id').val(),
+                            NRIC: $('#nric').val(),
+                            FullName: $('#name').val(),
+                            PhoneNumber: $('#phoneNumber').val(),
+                            DOB: $('#DOB').val(),
+                            Gender: $('#genderSelect option:selected').val()
+                        };
+                        defaultGender = $('#genderSelect option:selected').val();
+                        ajaxPOST(data, path, '', '', res);
+                        isAble = false;
+                        btnVisibility();
+                        console.log(`response returned=> ${res.response}`);
+                        if (res.response = true) {
+                            defaultGender = $('#genderSelect option:selected').val();
+                            $('#app-text').remove();
+                            alertMessage.append(`<span id="app-text">Patient details updated successfully.</span>`);
+                            alertMessage.addClass("alert-success").removeClass("hide-btn");
+                        }
+                        else {
+                            $('#app-text').remove();
+                            alertMessage.append(`<span id="app-text">Error while updating patient details.</span>`);
+                            alertMessage.addClass("alert-danger").removeClass("hide-btn");
+                            resetForm;
+                        }
+                    }
+                });
+
+                function AddMedHistory() {
+                    var medHistory = $('#InputMedHistory').val();
+                    var userId = $('#med-history-userId').val();
+                    console.log("description =>" + medHistory + " " + "user id =>" + userId);
+                    $.ajax({
+                        type: "POST",
+                        url: "/User/AddMedHistory",
+                        data: { "Description": medHistory, "userId": userId },
+                        success: function (response) {
+                            var res = response["res"];
+                            var message = response["msg"];
+                            table.ajax.reload();
+                            $('.med-history-modal').modal("hide");
+                            alertMessageFunc(res, message, medHisAlertMsg);
+
+                        }
+                    });
+                }
+                $('#add-MedHistory-btn').click(function (e) {
+                    e.preventDefault();
+                    AddMedHistory();
+                });
+
+            </script>
+        }

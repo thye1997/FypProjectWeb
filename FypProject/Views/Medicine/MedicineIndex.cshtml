@@ -1,0 +1,205 @@
+﻿@model Medicine
+@{
+    //MedicineViewModel viewModel = Model;
+}
+<div class="alert hide-btn" id="medicine-list-alert-message" role="alert">
+    <button type="button" class="close" id="close-alert" onclick="closeMessageFunc($('#medicine-list-alert-message'))">
+        <span>&times;</span>
+    </button>
+</div>
+
+<div class="float-right m-3">
+    <button type="button" class="btn btn-outline-primary btn-sm" style="font-size:16px;" data-toggle="modal" data-target=".medicine-modal">Add Medicine</button>
+</div>
+
+
+<div class="modal fade medicine-modal mt-3" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content  p-4">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Medicine</h5>
+                <button type="button" id="close-medicine-modal" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="medicineAddForm">
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <label for="medicineName">Medicine Name</label>
+                        <input type="text" class="form-control" id="medicineName" name="medicineName" placeholder="name of medicine">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <select class="custom-select" id="medicineType" name="medicineType">
+                            <option value="">Select Type</option>
+                            <option value="Tablet">Tablet</option>
+                            <option value="Gel">Gel</option>
+                            <option value="Liquid">Liquid</option>
+                        </select>
+                    </div>
+                </div>
+                <span asp-validation-for="Type" class="text-danger d-block" style="margin-top:-16px;"></span>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="text-center">
+    <div class="table-responsive p-3" id="medicine-list-table-div">
+        <table class="table table-bordered dt-responsive" width="100%" id="medicine-list-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Medicine Name</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div class="modal" tabindex="-1" id="delete-alert-dialog" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <form>
+            <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+                <div class="modal-header">
+                    <h5 class="modal-title alert-heading">Delete Warning</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="DeleteMedicine()">Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        var alertMsg = $('#medicine-list-alert-message');
+        var table;
+        var serviceId; //store the id of service that want to delete
+
+        $(document).ready(function () {
+            LoadMedicineList();
+            $('#medicineAddForm').submit(function (e) {
+                e.preventDefault();
+                if ($(this).valid()) {
+                    AddMedicine();
+                    $('.medicine-modal').modal("hide");
+                }
+            })
+        });
+        $('#medicineAddForm').validate({
+            // Rules for form validation
+            rules: {
+                medicineName: {
+                    required: true,
+                },
+                medicineType: {
+                    required: true,
+                },
+            },
+            // Messages for form validation
+            messages: {
+                medicineName: {
+                    required: 'Medicine name is required.',
+                },
+                medicineType: {
+                    required: 'Medicine type is required',
+                }
+            },
+            errorPlacement: function (error, element) {
+                error.insertAfter(element);
+            }
+        });
+        $('#close-medicine-modal').click(function (e) {
+            e.preventDefault();
+            $('#medicineAddForm').trigger("reset");
+        })
+        function getMedicine(id) {
+            serviceId = id;
+            $('#delete-alert-dialog').modal('show');
+        }
+        //delete medicine after click confirm delete in modal
+        function DeleteMedicine() {
+            $.ajax({
+                type: "POST",
+                url: "/Medicine/DeleteMedicine",
+                data: { "Id": serviceId },
+                success: function (response) {
+                    var msg = response['msg'];
+                    var res = response['res'];
+                    alertMessageFunc(res, msg, alertMsg);
+                    table.ajax.reload();
+                }
+            });
+        }
+        function AddMedicine() {
+            var alertMsg = $('#medicine-list-alert-message');
+            var medicineName = $('#medicineName').val();
+            var medicineType = $('#medicineType').val();
+            $.ajax({
+                type: "POST",
+                url: "/Medicine/AddMedicine",
+                dataType: "json",
+                data: { "medName": medicineName, "medType": medicineType },
+                async: false,
+                success: function (response) {
+                    var msg = response['msg'];
+                    var res = response['res'];
+                    $('#medicineAddForm').trigger("reset");
+                    alertMessageFunc(res, msg, alertMsg);
+                    table.ajax.reload();
+                }
+            });
+        }
+        function LoadMedicineList() {
+            table = $('#medicine-list-table').DataTable({
+                //"searching": false,
+                "lengthChange": false,
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": false, // this is for disable filter (search box)
+                "ordering": false,
+
+                "ajax": {
+                    "url": "/Medicine/LoadData",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                "drawCallback": function (settings) {
+                    // Here the response
+                    var response = settings.json;
+                    console.log(response);
+                },
+                "columns": [
+                    { "data": "customId" },
+                    { "data": "type" },
+                    { "data": "medName" },
+                    { "data": "createdBy" },
+                    { "data": "createdOn" },
+                    {
+                        'data': "id",
+                        "render": function (id) {
+                            return '<a class="delete-service btn btn-danger btn-sm" href=# onclick="getMedicine(' + id + ')">Delete</a>';
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "No Medicine Found."
+                }
+            });
+        }
+    </script>
+}

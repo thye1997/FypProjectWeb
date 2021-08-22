@@ -1,0 +1,44 @@
+﻿@model UserViewModel
+@{
+    UserViewModel viewModel = Model;
+
+    ViewData["Title"] = "Home Page";
+}
+    <div class="text-center">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="user-list-table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Full Name</th>
+                        <th>NRIC</th>
+                        <th>Phone Number</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                @if (viewModel.DataList.Count > 0)
+                {
+                    @foreach (var users in viewModel.DataList)
+                    {
+                        <tbody>
+                            <tr>
+                                <td>@users.Id</td>
+                                <td>@users.FullName</td>
+                                <td>@users.NRIC</td>
+                                <td>@users.PhoneNumber</td>
+                                <td>
+                                    <a asp-controller="User" asp-action="UserDetail" asp-route-id="@users.Id"><i class="fa fa-info-circle fa-lg"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                }
+            </table>         
+        </div>
+        @if (viewModel.DataList.Count == 0)
+            {
+                <p>User not Found.</p>
+            }
+    </div>
+
+

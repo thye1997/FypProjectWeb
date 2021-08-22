@@ -1,0 +1,227 @@
+﻿@model SystemUser
+
+    <div class="alert hide-btn" id="sysUser-list-alert-message" role="alert">
+        <button type="button" class="close" id="close-alert" onclick="closeMessageFunc($('#sysUser-list-alert-message'))">
+            <span>&times;</span>
+        </button>
+    </div>
+
+<div class="float-right m-3">
+    <button type="button" class="btn btn-outline-primary btn-sm" style="font-size:16px;" data-toggle="modal" data-target=".add-sysUser-modal">Add System User</button>
+</div>
+
+
+<div class="modal fade add-sysUser-modal mt-3" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content  p-4">
+            <div class="modal-header">
+                <h5 class="modal-title">Add System User</h5>
+                <button type="button" class="close" id="close-sysUser-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="sysUserAddForm" autocomplete="nope">
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <label for="">User Name</label>
+                        <input type="text" class="form-control" id="inputUserName" name="sysUserName" placeholder="User Name" autocomplete="new-password">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <label for="">Name</label>
+                        <input type="text" class="form-control" id="inputName" name="sysName" placeholder="Name" autocomplete="new-password">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <label for="">Password</label>
+                        <input type="password" class="form-control" id="inputPassword" name="sysUserPass" placeholder="Password" autocomplete="nope">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <select class="custom-select" id="inputRole" name="sysUserRole">
+                            <option value="">Select Role</option>
+                            <option value="Doctor">Doctor</option>
+                            <option value="Staff">Staff</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="text-center">
+    <div class="table-responsive p-3" id="sysuser-list-table-div">
+        <table class="table table-bordered dt-responsive" width="100%" id="sysuser-list-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User Name</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div class="modal" tabindex="-1" id="delete-alert-dialog" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <form>
+            <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+                <div class="modal-header">
+                    <h5 class="modal-title alert-heading">Delete Warning</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="DeleteUser()">Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var alertMsg = $('#sysUser-list-alert-message');
+        var table;
+        var userId; //store the id of System User that want to delete
+        $(document).ready(function () {
+            $('#sysUserAddForm').submit(function (e) {
+                e.preventDefault();
+                if ($(this).valid()) {
+                    AddSystemUser();
+                    $('.add-sysUser-modal').modal("hide");
+                    $('#sysUserAddForm').trigger("reset");
+                }
+            })
+            loadSystemUserList();
+        });
+        function getSystemUser(id) {
+            serviceId = id;
+            $('#delete-alert-dialog').modal('show');
+        }
+        $('#close-sysUser-modal').click(function (e) {
+            e.preventDefault();
+            $('#sysUserAddForm').trigger("reset");
+        })
+        $('#sysUserAddForm').validate({
+            // Rules for form validation
+            rules: {
+                sysUserName: {
+                    required: true,
+                },
+                sysName: {
+                    required: true,
+                },
+                sysUserPass: {
+                    required: true,
+                },
+                sysUserRole: {
+                    required: true,
+                }
+            },
+            // Messages for form validation
+            messages: {
+                sysUserName: {
+                    required: 'User name is required.',
+                },
+                sysName: {
+                    required: 'Name is required.',
+                },
+                sysUserPass: {
+                    required: 'Password is required.',
+                },
+                sysUserRole: {
+                    required: 'Role is required.',
+                }
+            },
+            errorPlacement: function (error, element) {
+                error.insertAfter(element);
+            }
+        });
+        //delete system user after click confirm delete in modal
+        function DeleteUser() {
+            $.ajax({
+                type: "POST",
+                url: "/SystemUser/DeleteSystemUser",
+                data: { "Id": serviceId },
+                success: function (response) {
+                    var msg = response['msg'];
+                    var res = response['res'];
+                    alertMessageFunc(res, msg, alertMsg);
+                    table.ajax.reload();
+                }
+            });
+        }
+        function loadSystemUserList() {
+            table = $('#sysuser-list-table').DataTable({
+                //"searching": false,
+                "lengthChange": false,
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": false, // this is for disable filter (search box)
+                "ordering": false,
+
+                "ajax": {
+                    "url": "/SystemUser/LoadData",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                "drawCallback": function (settings) {
+                    // Here the response
+                    var response = settings.json;
+                    console.log(response);
+                },
+                columns: [
+                    { "data": "customId" },
+                    { "data": "userName" },
+                    { "data": "createdBy" },
+                    { "data": "createdOn" },
+                    {
+                        'data': "id",
+                        "render": function (id) {
+                            return '<a class="delete-service btn btn-danger btn-sm" href=# onclick="getSystemUser(' + id + ')">Delete</a>';
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "No System User Found."
+                }
+            });
+        }
+        function AddSystemUser() {
+            var username = $('#inputUserName').val();
+            var name = $('#inputName').val();
+            var password = $('#inputPassword').val();
+            var role = $('#inputRole').val();
+           
+            $.ajax({
+                type: "POST",
+                url: "/SystemUser/AddSystemUser",
+                dataType: "json",
+                data: { "userName": username, "name": name, "Password": password, "Role": role },
+                async: false,
+                success: function (response) {
+                    var msg = response['msg'];
+                    var res = response['res'];
+                    $('#sysUserAddForm').trigger("reset");
+                    alertMessageFunc(res, msg, alertMsg);
+                    table.ajax.reload();
+                }
+            });
+        }
+    </script>
+}

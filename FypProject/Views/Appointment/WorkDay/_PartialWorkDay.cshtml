@@ -1,0 +1,31 @@
+﻿@model AppointmentScheduleViewModel
+
+@{
+    AppointmentScheduleViewModel viewModel = Model;
+}
+    <div class="bg-white rounded" id="partial-off-list">
+        <div class="card-header text-center font-weight-bold bg-light text-dark head" style="margin:0 -15px;">
+            Weekly Operation Day
+            <a class="float-right" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#" id="edit-btn">Edit</a>
+            </div>
+        </div>
+        <div class="alert hide-btn" id="alert-message" role="alert" style="margin:0 -15px;">
+            <button type="button" class="close" id="close-alert"  onclick="closeMessageFunc($('#alert-message'))">
+                <span>&times;</span>
+            </button>
+        </div>
+        @await Html.PartialAsync(SystemData.ViewPagePath.WorkDayTableView,viewModel)
+        <div class="form-group row mt-2 ml-3">
+            <div class="cancel-btn-div hide-btn">
+                <button class="btn btn-light" id="cancel-btn">Cancel</button>
+            </div>
+            <div class="save-btn-div hide-btn">
+                <button type="submit" class="btn btn-success" id="save-btn">Save</button>
+            </div>
+        </div>
+    </div>
+

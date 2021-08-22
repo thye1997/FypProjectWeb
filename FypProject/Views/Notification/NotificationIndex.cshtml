@@ -1,0 +1,60 @@
+﻿
+    <div class="alert hide-btn" id="notification-list-alert-message" role="alert">
+        <button type="button" class="close" id="close-alert" onclick="closeMessageFunc($('#notification-list-alert-message'))">
+            <span>&times;</span>
+        </button>
+    </div>
+
+<div class="float-right m-3">
+    <button type="button" class="btn btn-outline-primary btn-sm" style="font-size:16px;" data-toggle="modal" data-target=".notification-modal">
+        Add Notification
+        <!--Html.CustomHtml()-->
+    </button>
+</div>
+
+<div class="modal fade notification-modal" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Notification</h5>
+                <button type="button" class="close" id="close-notification-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="notificationForm">
+                <div class="row mt-2">
+                    <div class="form-group col-6">
+                        <label for="title">Title</label>
+                        <input type="text" class="form-control" id="title" name="notiTitle" placeholder="title">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <label for="content">Content</label>
+                        <textarea class="form-control" id="content" name="notiContent" placeholder="Content of notification"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="text-center">
+    <div class="table-responsive p-3" id="patientUser-list-table-div">
+        <table class="table table-bordered dt-responsive" width="100%" id="notification-list-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>Date</th>
+                    <th>Created By</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript" src="~/js/Notification/Notification.js"></script>
+}

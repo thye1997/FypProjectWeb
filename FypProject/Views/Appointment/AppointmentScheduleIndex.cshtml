@@ -1,0 +1,108 @@
+﻿@model AppointmentScheduleViewModel
+@{
+    AppointmentScheduleViewModel viewModel = Model;
+}
+
+<div class="mb-5 container-fluid">
+    @await Html.PartialAsync(SystemData.ViewPagePath.WorkDayView, viewModel)
+</div>
+
+<div style="background: #f1f1f1; height:8px;"></div>
+
+<div class="mb-5 container-fluid">
+    @await Html.PartialAsync(SystemData.ViewPagePath.HolidayView, viewModel)
+</div>
+
+<div style="background: #f1f1f1; height:8px;"></div>
+<div class="mb-5 container-fluid">
+    <div class="row">
+        @await Html.PartialAsync(SystemData.ViewPagePath.TimeSlotView, viewModel)
+        @await Html.PartialAsync(SystemData.ViewPagePath.SlotDurationView, viewModel)
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript" src="~/js/User/User.js"></script>
+    <script type="text/javascript" src="~/js/Appointment/SpecialHoliday.js"></script>
+    <script type="text/javascript" src="~/js/Appointment/TimeSlot.js"></script>
+    <script type="text/javascript" src="~/js/Appointment/SlotDuration.js"></script>
+
+    <script type="text/javascript">
+        var offDayTR = $('#offDayTR');
+        var checkboxChild = $('#checkbox-child');
+        var alertMessage = $('#alert-message');
+        var closeBtn = $('#close-alert');
+        var offDayTableClone;
+        var isChecked = new Array();
+
+
+
+
+        editBtn.click(function (e) {
+            offDayTableClone = $('#offDay-table').clone();
+            /*$('#offDayTR > tr > td > input[type=checkbox]:checked').each(function (index) {
+                console.log(this.value);
+            });*/
+            isAble = true;
+            console.log("edit button clicked");
+            e.preventDefault();
+            if (isAble == true) {
+                $('#checkbox-action').removeClass("hide-btn");
+                $('#offDayTR > tr').each(function (index, tr) {
+                    $(this).find('#checkbox-child').removeClass("hide-btn");
+                });
+            }
+        });
+
+        cancelBtn.click(function (e) {
+            e.preventDefault();
+            if (isAble == true) {
+                isAble = false;
+                btnVisibility();
+                $('#offDay-table').replaceWith(offDayTableClone);
+                $('#checkbox-action').addClass("hide-btn");
+                $('#offDayTR > tr').each(function (index, tr) {
+                    $(this).find('#checkbox-child').addClass("hide-btn");
+                });
+            }
+        });
+
+
+        saveBtn.click(function (e) {
+            e.preventDefault();
+            isChecked.length = 0;
+
+            $("#offDayTR tr").each(function () {
+                $(this).find("td > input[type=checkbox]:checked").each(function () {
+                    if (this.checked) {
+                        var color = $(this).val();
+                        isChecked.push(color);
+                    }
+                });
+            });
+            $.ajax({
+                type: "POST",
+                url: "/Appointment/UpdateOffDay",
+                data: { "isChecked": isChecked },
+                async: false,
+                success: function (response) {
+                    if (isAble == true) {
+                        isAble = false;
+                        btnVisibility();
+                    }
+                    $('#offDay-table').replaceWith(response);
+                    $('#app-text-1').remove();
+                    alertMessage.append(`<span id="app-text-1">Weekly operation schedule updated successfully.</span>`);
+                    alertMessage.addClass("alert-success").removeClass("hide-btn");
+                },
+                error: function (err) {
+                    $('#app-text-1').remove();
+                    alertMessage.append(`<span id="app-text-1">uknown error occurred.</span>`);
+                    alertMessage.addClass("alert-danger").removeClass("hide-btn");
+                }
+
+            });
+        });
+
+    </script>
+}

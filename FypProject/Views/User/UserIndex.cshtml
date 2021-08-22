@@ -1,0 +1,185 @@
+﻿@model User
+@{
+}
+<div class="alert hide-btn" id="patient-list-alert-message" role="alert">
+    <button type="button" class="close" id="close-alert" onclick="closeMessageFunc($('#patient-list-alert-message'))">
+        <span>&times;</span>
+    </button>
+</div>
+<div class="float-right m-3">
+    <button type="button" class="btn btn-outline-primary btn-sm" style="font-size:16px;" data-toggle="modal" data-target=".add-patient-modal">
+        Add Patient
+    </button>
+
+</div>
+
+<div class="input-group mb-3 p-3">
+    <input type="text" class="form-control" name="search" id="searchUserInfo" placeholder="Full Name or NRIC">
+</div>
+
+<div class="modal fade add-patient-modal" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Patient</h5>
+                <button type="button" class="close" id="close-addpatient-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="userForm">
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <label for="InputNRIC">NRIC<span style="color:red">*</span></label>
+                        <input type="text" class="form-control" id="InputNRIC" name="nric" placeholder="eg. 999999-10-9999">
+                    </div>
+                    <div class="form-group col">
+                        <label for="InputFullName">Full Name<span style="color:red">*</span></label>
+                        <input type="text" class="form-control" id="InputFullName" name="fullName" placeholder="eg. Low Chen Thye">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="InputPhoneNumber">Phone Number<span style="color:red">*</span></label>
+                        <input type="text" class="form-control" id="InputPhoneNumber" name="phoneNumber" placeholder="eg. 018-123456789">
+                    </div>
+                    <div class="form-group col">
+                        <label for="Inputbirthday">Date of Birth<span style="color:red">*</span></label>
+                        <input type="text" class="form-control" id="Inputbirthday" name="DOB">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="InputGender1">Gender<span style="color:red">*</span></label>
+                        <select class="custom-select" id="genderSelect" name="Gender">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="d-block" id="genderErr" style="margin-top:-16px; color:red;"></span>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="text-center">
+    <div class="table-responsive p-3" id="patientUser-list-table-div">
+        <table class="table table-bordered dt-responsive" width="100%" id="patientUser-list-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>NRIC</th>
+                    <th>Phone Number</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/User/formvalidation.js"></script>
+    <script type="text/javascript">
+        var alertMessage = $('#patient-list-alert-message');
+        var closeBtn = $('#close-alert');
+        var birthdayPicker = $('#Inputbirthday');
+        var table;
+        var userId; //store the id of System User that want to delete
+        $(document).ready(function () {
+            birthdayPicker.datepicker({
+                format: 'dd/mm/yyyy',
+                startDate: '-100y',
+                endDate: '+0d',
+            });
+
+            $.validator.addMethod(
+                "regex",
+                function (value, element, regexp) {
+                    return this.optional(element) || regexp.test(value);
+                },
+                "Please check your input."
+            );
+            $("#genderSelect").change(function () {
+                var genderSelect = $("#genderSelect").val();
+                if (genderSelect != "") {
+                    $("#genderErr").text("");
+                }
+            });
+            table = $('#patientUser-list-table').DataTable({
+                "lengthChange": false,
+                "processing": true, // for show progress bar
+                "serverSide": true, // for process server side
+                "filter": true, // this is for disable filter (search box)
+                "ordering": false,
+
+                "ajax": {
+                    "url": "/User/LoadData",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                "drawCallback": function (settings) {
+                    // Here the response
+                    var response = settings.json;
+                    console.log(response);
+                },
+                columns: [
+                    { "data": "customId" },
+                    { "data": "fullName" },
+                    { "data": "nric" },
+                    { "data": "phoneNumber" },
+                    {
+                        'data': "id",
+                        "render": function (id) {
+                            return '<a class="btn btn-primary btn-sm" href="/User/UserDetail/' + id + '">View</a>';
+                        }
+                    },
+                ],
+                "language": {
+                    "emptyTable": "No Patient User Found."
+                }
+            });
+
+            $('#searchUserInfo').keyup(function () {
+                table.search($(this).val()).draw();
+            })
+
+        });
+        $('#close-addpatient-modal').click(function (e) {
+            e.preventDefault();
+            $('#userForm').trigger("reset");
+        })
+        $('#userForm').submit(function (e) {
+            e.preventDefault();
+            if ($(this).valid()) {
+                AddUser();
+                $('.add-patient-modal').modal("hide");
+                $('#userForm').trigger("reset");
+            }
+        })
+        function AddUser() {
+            var nric = $('#InputNRIC').val();
+            var fullName = $('#InputFullName').val();
+            var phoneNumber = $('#InputPhoneNumber').val();
+            var gender = $('#genderSelect').val();
+            var dob = $('#Inputbirthday').val();
+            $.ajax({
+                type: "POST",
+                url: "/User/AddUser",
+                dataType: "json",
+                data: { "NRIC": nric, "FullName": fullName, "Gender": gender, "DOB": dob, "PhoneNumber": phoneNumber},
+                async: false,
+                success: function (response) {
+                    var msg = response['msg'];
+                    var res = response['res'];
+                    $('#userForm').trigger("reset");
+                    alertMessageFunc(res, msg, alertMessage);
+                    table.ajax.reload();
+                }
+            });
+        }
+    </script>
+}

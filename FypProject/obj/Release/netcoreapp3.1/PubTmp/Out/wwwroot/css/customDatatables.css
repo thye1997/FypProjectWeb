@@ -1,0 +1,9 @@
+﻿
+.dataTables_info {
+    float: left;
+    margin-top: -10px;
+}
+
+.dataTables_filter{
+    display:none;
+}

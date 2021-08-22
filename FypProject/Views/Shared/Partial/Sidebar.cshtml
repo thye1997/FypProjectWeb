@@ -1,0 +1,31 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+    <!-- Sidebar -->
+    <div class="d-flex" id="wrapper">
+        <div class="bg-light border-right shadow-sm" id="sidebar-wrapper">
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action bg-light" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                <a class="list-group-item list-group-item-action bg-light" id="appt-dropdown">Appointment<i class="fa fa-caret-down"></i></a>
+                <div id="appt-dropdown-container">
+                    <a class="list-group-item list-group-item-action bg-light" asp-area="" asp-controller="Appointment" asp-action="Index">Appointment List</a>
+                    <a class="list-group-item list-group-item-action bg-light" asp-area="" asp-controller="Appointment" asp-action="AppointmentSchedule">Appointment Schedule</a>
+                </div>
+                <a class="list-group-item list-group-item-action bg-light" asp-controller="User" asp-action="Index">Master Data</a>
+                <a class="list-group-item list-group-item-action bg-light" asp-controller="Notification" asp-action="Index">Notification</a>
+                <a class="list-group-item list-group-item-action bg-light" id="config-dropdown">Configuration<i class="fa fa-caret-down"></i></a>
+                <div id="config-dropdown-container">
+                    <a class="list-group-item list-group-item-action bg-light" asp-controller="QRCode" asp-action="Index">Generate QR Code</a>
+                    @if (User.FindFirst(ClaimTypes.Role).Value == SystemData.Role.Doctor)
+                    {
+                    <a class="list-group-item list-group-item-action bg-light" asp-controller="SystemUser" asp-action="Index">System User</a>
+                    }
+                    <a class="list-group-item list-group-item-action bg-light" asp-controller="Medicine" asp-action="Index">Medicine</a>
+                    <a class="list-group-item list-group-item-action bg-light" asp-controller="Service" asp-action="Index">Service</a>
+                </div>
+            </div>
+        </div>
+ 
+

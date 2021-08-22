@@ -1,0 +1,32 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="alert hide-btn" id="appt-list-alert-message" role="alert">
+    <button type="button" class="close" id="close-alert" onclick="closeMessageFunc($('#appt-list-alert-message'))">
+        <span>&times;</span>
+    </button>
+</div>
+<div class="float-right m-3">
+    <button type="button" class="btn btn-outline-primary btn-sm" style="font-size:16px;" data-toggle="modal" data-target=".request-appt-modal">
+        Add Appointment
+    </button>
+</div>
+@await Html.PartialAsync(SystemData.ViewPagePath.ApptAddModalView)
+
+<div class="upcoming-search-input input-group mb-3 p-3 tab-pane fade show active" id="nav-upcoming" role="tabpanel" aria-labelledby="nav-upcoming-tab">
+    <input type="text" class="form-control" name="search" id="upcomingsearchUserInfo" placeholder="Full Name or NRIC">
+</div>
+<div class="past-search-input input-group mb-3 p-3 tab-pane fade hide-btn" id="nav-past" role="tabpanel" aria-labelledby="nav-past-tab">
+    <input type="text" class="form-control" name="search" id="pastsearchUserInfo" placeholder="Full Name or NRIC">
+</div>
+<div class="noShow-search-input input-group mb-3 p-3 tab-pane fade hide-btn" id="nav-noShow" role="tabpanel" aria-labelledby="nav-noShow-tab">
+    <input type="text" class="form-control" name="search" id="noShowsearchUserInfo" placeholder="Full Name or NRIC">
+</div>
+
+@await Html.PartialAsync(SystemData.ViewPagePath.ApptListTableView)
+
+@section Scripts{
+    <script type="text/javascript" src="~/js/Appointment/requestappt.js"></script>
+}

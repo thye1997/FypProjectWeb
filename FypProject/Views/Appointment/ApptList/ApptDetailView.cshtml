@@ -1,0 +1,377 @@
+﻿@model AppointmentDetailViewModel
+@{
+    AppointmentDetailViewModel detailViewModel = Model;
+}
+
+<div class="container-fluid mb-5">
+    <!--<div class="row">-->
+    <!--<div class="bg-white rounded col" id="partial-off-list" style="border-right: 3px solid #f1f1f1;">-->
+        <div class="card-header text-center font-weight-bold bg-light text-dark head" style="margin:0 -15px;">
+            Appointment Details
+            @if ((detailViewModel.Status == (int)SystemData.AppointmentStatus.Confirmed && ((DateTime.Parse(detailViewModel.Date) - DateTime.Today).Days >= 1)) || detailViewModel.Status == (int)SystemData.AppointmentStatus.InQueue || detailViewModel.Status == (int)SystemData.AppointmentStatus.OnGoing)
+            {<a class="float-right" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </a>}
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="dropdown-menu dropdown-container" aria-labelledby="dropdownMenuButton">
+
+                    @if (detailViewModel.Status == (int)SystemData.AppointmentStatus.OnGoing)
+                    {
+                        if (User.FindFirst(ClaimTypes.Role).Value == SystemData.Role.Doctor)
+                        {
+                            <a class="dropdown-item" href="#" id="edit-appt-btn">Edit</a>
+                            <a class="dropdown-item" data-toggle="modal" data-target=".done-appt-modal" onclick="CompleteAppointment(@detailViewModel.Id)">Done</a>}
+
+                    }
+                    @if (detailViewModel.Status == (int)SystemData.AppointmentStatus.Confirmed)
+                    {
+
+                        <a class="dropdown-item" data-toggle="modal" data-target=".reschedule-appt-modal" onclick="LoadRescheduleModal()">Reschedule</a>
+                        <a class="dropdown-item cancel-appt-btn" data-toggle="modal" data-target=".cancel-appt-modal" onclick="CancelAppointment(@detailViewModel.Id)">Cancel</a>
+
+                    }
+                    @if (detailViewModel.Status == (int)SystemData.AppointmentStatus.InQueue)
+                    {
+                        <a class="dropdown-item" data-toggle="modal" data-target=".next-appt-modal" onclick="NextOngoingAppointment(@detailViewModel.Id)">Next</a>
+                    }
+                </div>
+            }
+        </div>
+        <div class="alert hide-btn" id="appt-alert-message" role="alert" style="margin:0 -15px;">
+            <button type="button" class="close" id="close-alert" onclick="closeMessageFunc($('#appt-alert-message'))">
+                <span>&times;</span>
+            </button>
+        </div>
+        <div class="p-3">
+            <div class="form-row">
+                <div class="col">
+                    <label for="inputEmail3" class="col-sm-3 col-form-label">NRIC:</label>
+                    <input type="text" class="form-control" id="nric" name="nric" placeholder="" value="@detailViewModel.NRIC" disabled>
+                </div>
+                <div class="col">
+                    <label for="inputEmail3" class="col-sm-3 col-form-label">Name:</label>
+                    <input type="text" class="form-control" id="name" name="fullName" value="@detailViewModel.FullName" disabled>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col">
+                    <label for="inputEmail3" class="col-sm-3 col-form-label" style="white-space:nowrap;">Gender:</label>
+                    <!--<div class="form-group row col-sm-5">-->
+                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="@detailViewModel.Gender" disabled>
+                </div>
+                <div class="col">
+                    <label for="inputEmail3" class="col-sm-3 col-form-label" style="white-space:nowrap;">Day of Birth:</label>
+                    <input type="text" class="form-control" id="DOB" name="DOB" value="@detailViewModel.DOB" disabled>
+                </div>
+            </div>
+            <!--Date and slot-->
+            <div class="form-row">
+                <div class="col">
+                    <label for="apptDate" class="col-sm-3 col-form-label" style="white-space:nowrap;">Date:</label>
+                    <!--<div class="form-group row col-sm-5">-->
+                    <input type="text" class="form-control" id="apptDate" value="@detailViewModel.Date" disabled>
+                </div>
+                <div class="col">
+                    <label for="apptSlot" class="col-sm-3 col-form-label" style="white-space:nowrap;">Slot:</label>
+                    <input type="text" class="form-control" id="apptSlot" value="@detailViewModel.Slot" disabled>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <label for="apptDate" class="col-sm-3 col-form-label" style="white-space:nowrap;">Status:</label>
+                    <!--<div class="form-group row col-sm-5">-->
+                    <input type="text" class="form-control" id="apptStatus" value="@detailViewModel.StatusString" disabled>
+                </div>
+                <div class="col-sm-6">
+                    <label for="apptDate" class="col-sm-3 col-form-label" style="white-space:nowrap;">Service:</label>
+                    <input type="text" class="form-control" id="apptType" value="@detailViewModel.Service" disabled>
+                </div>
+            </div>
+            <!--note-->
+            <div class="form-row">
+                <div class="col">
+                    <label for="apptNoteArea">Note</label>
+                    <textarea class="form-control" id="apptNoteArea" disabled>@detailViewModel.Note</textarea>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <div class="cancel-btn-div hide-btn">
+                    <button class="btn btn-light" id="cancel-btn">Cancel</button>
+                </div>
+                <div class="save-btn-div hide-btn">
+                    <button type="submit" class="btn btn-success" id="save-btn">Save</button>
+                </div>
+            </div>
+        </div>
+    <!--</div>-->
+</div>
+<div class="mb-5 container-fluid">
+    <div class="card-header text-center font-weight-bold bg-light text-dark" style="margin:0 -15px;">
+        MEDICAL HISTORY
+    </div>
+    <div class="text-center">
+        <div class="table-responsive p-3" id="patientUser-list-table-div">
+            <table class="table table-bordered dt-responsive" width="100%" id="medHistory-list-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Slot</th>
+                        <th>Service</th>
+                        <th>Result</th>
+                        <th>Medical Prescription</th>
+                        <th>By Doctor</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<!--<div class="bg-white rounded col">
+    <div class="card-header text-center font-weight-bold bg-light text-dark" style="margin:0 -15px;">
+        MEDICAL HISTORY
+    </div>
+    <div class="text-center">
+        <div class="table-responsive p-3" id="patientUser-list-table-div" style="overflow-x:auto;">
+            <table class="table table-bordered dt-responsive" width="100%" id="medHistory-list-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Result</th>
+                        <th>Medical Prescription</th>
+                        <th>By Doctor</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>-->
+<!--</div>-->
+<input type="text" id="apptId" value="@detailViewModel.Id" hidden>
+<input type="text" id="userid" value="@detailViewModel.UserId" hidden>
+<input type="text" id="apptStatusInt" value="@detailViewModel.Status" hidden>
+
+<!--appointment result section-->
+<div class="appt-result hide-btn" style="margin-top:-20px;">
+    <form id="appt-result-form">
+        <div class="container-fluid p-3">
+            <div class="card-header text-center font-weight-bold bg-light text-dark head" style="margin:0 -15px;">
+                Medical Prescription
+
+                @if (detailViewModel.Status != (int)SystemData.AppointmentStatus.Completed)
+                {
+                    <a class="float-right" id="medPrescriptdropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-container" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target=".med-presc-modal">Add Medical Prescription</a>
+                    </div>
+                }
+            </div>
+            <div class="appt-medprescription-section p-3">
+                <div class="mt-2 med-prescription-list-div">
+                    @foreach (var n in detailViewModel.medicalPrescriptions)
+                    {
+                        var formatted = $"({n.medType})-{n.medName}-{n.Description}";
+                        <div class="row">@formatted</div>
+                    }
+                    @if (detailViewModel.medicalPrescriptions.Count <= 0 && (detailViewModel.Status == (int)SystemData.AppointmentStatus.Completed))
+                    {
+                        <p>No Medical Prescription available.</p>
+                    }
+                </div>
+            </div>
+
+        </div>
+        <div class="mb-5 container-fluid p-3">
+            <div class="card-header text-center font-weight-bold bg-light text-dark head" style="margin:0 -15px;">
+                Result
+            </div>
+            <div class="appt-result-section">
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <label for="noteArea">Result</label>
+                        @if (detailViewModel.Status == (int)SystemData.AppointmentStatus.Completed)
+                        {
+                            <textarea class="form-control" id="appt-result-txtarea">@detailViewModel.Result</textarea>
+                        }
+                        else
+                        {
+                            <textarea class="form-control" id="appt-result-txtarea" disabled></textarea>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="appt-edit-btn-section hide-btn" style="margin-left:18px;">
+                <div class="row mt-2">
+                    <div class="cancel-btn-div">
+                        <button class="btn btn-light" id="cancel-edit-appt">Cancel</button>
+                    </div>
+                    <div class="save-btn-div">
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--cancel appointment modal-->
+<div class="modal cancel-appt-modal" tabindex="-1" id="checkIn-appt-dialog" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <form>
+            <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+                <div class="modal-header">
+                    <h5 class="modal-title alert-heading">Cancel Appointment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Cancel this appointment?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="CancelAppointment(0)">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--next appointment modal-->
+<div class="modal next-appt-modal" tabindex="-1" id="next-appt-dialog" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <form>
+            <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Attending appointment </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Change to attending appointment?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="NextOngoingAppointment(0)">Yes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--done appointment modal-->
+<div class="modal done-appt-modal" tabindex="-1" id="done-appt-dialog" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <form>
+            <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Complete Appointment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Change to complete appointment?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="CompleteAppointment(0)">Yes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--reschedule appointment modal-->
+<div class="modal reschedule-appt-modal" tabindex="-1" id="reschedule-appt-dialog" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content  pt-2 pl-3 pr-3 pb-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Reschedule Appointment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="reschedule-form">
+                <div class="modal-body">
+                    <div class="row mt-2">
+                        <div class="form-group col-6">
+                            <label for="existPatientApptDate">Appointment Date<span style="color:red">*</span></label>
+                            <input type="text" class="form-control" id="ApptDate" name="apptDate">
+                        </div>
+
+                    </div>
+                    <div class="row mt-2">
+                        <div class="form-group col">
+                            <label for="timeSlotSelect">Slot<span style="color:red">*</span></label>
+                            <select class="custom-select" id="timeSlotSelect" name="timeSlot" disabled>
+                                <option value="">Select Slot</option>
+                                <option value=1>Morning</option>
+                                <option value=2>Afternoon</option>
+                                <option value=3>Night</option>
+                            </select>
+                        </div>
+                        <div class="form-group col">
+                            <label for="timeSlotSelect">Time Slot<span style="color:red">*</span></label>
+                            <select class="custom-select" id="ApptTimeSlot" name="timeSlotStart" disabled>
+                                <option value="">Select Time</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Yes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Add Prescription modal-->
+<div class="modal fade med-presc-modal mt-3" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content  p-4">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Medical Prescription</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="medPrescriptionForm">
+
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <select class="custom-select" id="medTypeSelect">
+                            <option value="">Select Type</option>
+                            <option value="Tablet">Tablet</option>
+                            <option value="Gel">Gel</option>
+                            <option value="Liquid">Liquid</option>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <select class="custom-select" id="medNameSelect" disabled>
+                            <option value="">Select Medicine</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="form-group col">
+                        <label for="medicineName">Description</label>
+                        <textarea class="form-control" id="medDesc" name="medDesc" placeholder="Description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/Appointment/apptdetails.js"></script>
+
+}

@@ -1,0 +1,41 @@
+﻿@model AppointmentScheduleViewModel
+
+@{
+    AppointmentScheduleViewModel viewModel = Model;
+}
+
+    <div class="bg-white rounded col-6" id="partial-slot-duration" style="border-right: 3px solid #f1f1f1;">
+        <div class="card-header text-center font-weight-bold bg-light text-dark head" style="margin:0 -15px;">
+            Slot Duration
+            <a class="float-right" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" style="cursor:pointer;" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="#" id="sd-edit-btn">Edit</a>
+            </div>
+        </div>
+        <div class="alert hide-btn" id="slot-duration-alert-message" role="alert" style="margin:0 -15px;">
+            <button type="button" class="close" id="close-alert" onclick="closeMessageFunc($('#slot-duration-alert-message'))">
+                <span>&times;</span>
+            </button>
+        </div>
+        <form id="slotDurationForm">
+            <div class="row mt-2">
+                <div class="form-group col-6">
+                    <label for="timeSlotSelect">Slot Duration</label>
+                    <select class="custom-select" id="slotDurationSelect" name="slotDuration">
+                        <option value=1>15 minutes</option>
+                        <option value=2>30 minutes</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <div class="form-group row update-btn-pos">
+                <div class="cancel-btn-div hide-btn">
+                    <button class="btn btn-light" id="sd-cancel-btn">Cancel</button>
+                </div>
+                <div class="save-btn-div hide-btn">
+                    <button type="submit" class="btn btn-success" id="sd-save-btn">Save</button>
+                </div>
+        </div>       
+    </div>

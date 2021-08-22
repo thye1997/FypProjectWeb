@@ -1,0 +1,53 @@
+﻿@model AppointmentScheduleViewModel
+
+@{
+    AppointmentScheduleViewModel viewModel = Model;
+}
+<div class="text-center mt-3" id="offDay-table">
+    <div class="table-responsive  p-3">
+        <table class="table table-bordered" id="user-list-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Day</th>
+                    <th>Operation</th>
+                    <th class="hide-btn" id="checkbox-action">Action</th>
+                </tr>
+            </thead>
+            @if (viewModel.offDayList.Count > 0)
+            {
+                @for (var i = 0; i < viewModel.offDayList.Count(); i++)
+                {
+                    <tbody id="offDayTR">
+                        <tr>
+                            <td id="dayID">@viewModel.offDayList[i].Id</td>
+                            <td>@viewModel.offDayList[i].Day</td>
+                            @if (!viewModel.offDayList[i].isOffDay)
+                            {
+                                <td>Open</td>
+                            }
+                            else
+                            {
+                                <td>Close</td>
+                            }
+                            @if (!viewModel.offDayList[i].isOffDay)
+                            {
+                                <td id="checkbox-child" class="hide-btn"><input name="isChecked" type="checkbox" value="@viewModel.offDayList[i].Id" checked="true" /></td>
+                            }
+                            else
+                            {
+                                <td id="checkbox-child" class="hide-btn"><input name="isChecked" type="checkbox" value="@viewModel.offDayList[i].Id" /></td>
+
+                            }
+
+                        </tr>
+                    </tbody>
+                }
+            }
+        </table>
+    </div>
+    @if (viewModel.offDayList.Count == 0)
+    {
+        <p>Day not Found.</p>
+    }
+</div>
