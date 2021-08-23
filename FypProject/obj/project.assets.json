@@ -9970,11 +9970,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\chent\\Documents\\FypProgrammingFolder\\FypProjLatest\\FypProject\\FypProject\\FypProject.csproj",
+      "projectUniqueName": "C:\\Users\\chent\\Documents\\FypProgrammingFolder\\FypProjectGithub\\FypProjectWeb\\FypProject\\FypProject.csproj",
       "projectName": "FypProject",
-      "projectPath": "C:\\Users\\chent\\Documents\\FypProgrammingFolder\\FypProjLatest\\FypProject\\FypProject\\FypProject.csproj",
+      "projectPath": "C:\\Users\\chent\\Documents\\FypProgrammingFolder\\FypProjectGithub\\FypProjectWeb\\FypProject\\FypProject.csproj",
       "packagesPath": "C:\\Users\\chent\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\chent\\Documents\\FypProgrammingFolder\\FypProjLatest\\FypProject\\FypProject\\obj\\",
+      "outputPath": "C:\\Users\\chent\\Documents\\FypProgrammingFolder\\FypProjectGithub\\FypProjectWeb\\FypProject\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
