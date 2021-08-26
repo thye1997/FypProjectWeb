@@ -17,7 +17,8 @@ namespace FypProject.Base
 
         protected BaseService(string cronExpression, TimeZoneInfo timeZoneInfo)
         {
-            _expression = CronExpression.Parse(cronExpression, CronFormat.IncludeSeconds);
+            _expression = CronExpression.Parse(cronExpression, CronFormat.Standard);
+            //_expression = CronExpression.Parse(cronExpression, CronFormat.IncludeSeconds);
             _timeZoneInfo = timeZoneInfo;
         }
 
@@ -26,7 +27,8 @@ namespace FypProject.Base
             Debug.WriteLine("This part runned");
             //var cancelToken = new CancellationTokenSource();
             //cancelToken.Cancel();
-            await ScheduleJob(cancellationToken);
+           await SetupTimer(cancellationToken);
+            //await ScheduleJob(cancellationToken);
         }
         protected virtual async Task ScheduleJob(CancellationToken cancellationToken)
         {
@@ -36,21 +38,24 @@ namespace FypProject.Base
             if (next.HasValue)
             {
                 var delay = next.Value - DateTimeOffset.Now;
+                Debug.WriteLine($"Delay total seconds => {delay.TotalSeconds}");
                 if (delay.TotalMilliseconds <= 0)   // prevent non-positive values from being passed into Timer
                 {
                     await ScheduleJob(cancellationToken);
                 }
                 _timer = new System.Timers.Timer(delay.TotalMilliseconds);
+                _timer.AutoReset = true;
                 _timer.Elapsed += async (sender, args) =>
                 {
-                    _timer.Dispose();  // reset and dispose timer
-                    _timer = null;
-
                     if (!cancellationToken.IsCancellationRequested)
                     {
                         await DoWork(cancellationToken);
-                        await ScheduleJob(cancellationToken);    // reschedule next
+                        //await ScheduleJob(cancellationToken);    // reschedule next
                     }
+                    //Dispose();  // reset and dispose timer
+                   // _timer = null;
+
+                   
 
                    /* if (!cancellationToken.IsCancellationRequested)
                     {
@@ -78,6 +83,25 @@ namespace FypProject.Base
             _timer?.Dispose();
         }
 
-      
+
+        private async Task SetupTimer(CancellationToken cancellationToken)
+        {
+            var interval = _expression.GetNextOccurrence(DateTimeOffset.Now, _timeZoneInfo); // calculate interval based on the cronos expression
+            Debug.WriteLine($"Delay total seconds => {interval.Value.ToUniversalTime()}");
+
+            if (interval.HasValue)
+            {
+                var nextScheduled = interval.Value - DateTimeOffset.Now;
+
+                _timer = new System.Timers.Timer(nextScheduled.TotalMilliseconds);
+                _timer.Enabled = true;
+                _timer.AutoReset = true;
+                _timer.Elapsed += async (sender, args) => {
+                    await DoWork(cancellationToken);
+                };
+                _timer.Start();
+            }
+           await Task.CompletedTask;
+        } 
     }
 }

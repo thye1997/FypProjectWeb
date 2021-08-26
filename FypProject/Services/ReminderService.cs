@@ -15,8 +15,8 @@ namespace FypProject.Services
     {
         private readonly IServiceProvider serviceProvider;
         public ReminderService(IServiceProvider serviceProvider) :
-            //base(@"0 0 * * *", TimeZoneInfo.Local)
-            base(@"* * * * * *", TimeZoneInfo.Local)
+            base(@"0 0 * * *", TimeZoneInfo.Local)
+            //base(@"* * * * * *", TimeZoneInfo.Local)
         {
             this.serviceProvider = serviceProvider;
         }

@@ -21,6 +21,10 @@ namespace FypProject.Controllers
         [HttpPost]
         public IActionResult RetrieveData([FromBody]int accId)
         {
+            if (accId <=0)
+            {
+                return NotFound(new { error= "Incorrect Account Id value" });
+            }
             try
             {
                 var result = dashboardService.RetrievePatientDataCount(accId);
