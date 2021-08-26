@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceExtension
     {
-        public static IServiceCollection serviceInjection(this IServiceCollection services, Action<string> message =null)
+        public static IServiceCollection DependencyInjection(this IServiceCollection services, Action<string> message =null)
         {
             message("-----dependency injection beginning...............");
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

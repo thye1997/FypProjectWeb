@@ -35,26 +35,15 @@ namespace FypProject
         public void ConfigureServices(IServiceCollection services)
         {
             serviceMessage = consoleMessage;
+
             services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("FypProject")
-            )
-            );
+            options.UseSqlServer(Configuration.GetConnectionString("FypProject")));
+            services.DependencyInjection(serviceMessage);
+            services.CookiesAuthConfig();
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.serviceInjection(serviceMessage);
             //services.Configure<List<Login>>(Configuration.GetSection("Users"));
-            services.AddHttpClient();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-            {
-                options.Cookie.Name = "FypProj";
-                options.LoginPath = "/Account/Login";
-                //options.ExpireTimeSpan = new TimeSpan(0,0,5);
-            });
-            /* .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,options => {
-                 options.RequireHttpsMetadata = false;
-             });*/
-
+            services.AddHttpClient();          
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,8 +59,7 @@ namespace FypProject
                // app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-            }
-           
+            }     
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

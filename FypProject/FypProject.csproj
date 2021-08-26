@@ -10,6 +10,12 @@
 	<PropertyGroup>
 		<AnalysisLevel>latest</AnalysisLevel>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Controllers\MedicalHistory\**" />
+	  <Content Remove="Controllers\MedicalHistory\**" />
+	  <EmbeddedResource Remove="Controllers\MedicalHistory\**" />
+	  <None Remove="Controllers\MedicalHistory\**" />
+	</ItemGroup>
 
 
 	<ItemGroup>
@@ -34,10 +40,6 @@
 
   <ItemGroup>
     <None Include="wwwroot\js\User\User.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\MedicalHistory\" />
   </ItemGroup>
 
 </Project>
