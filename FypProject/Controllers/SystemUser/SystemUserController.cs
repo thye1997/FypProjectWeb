@@ -17,8 +17,8 @@ using FypProject.Repository;
 
 namespace FypProject.Controllers
 {
-    [Authorize(Roles ="Doctor")]
-    public class SystemUserController : BaseController<SystemUser,SystemUserViewModel>
+    [Authorize(AuthenticationSchemes = authenticationSchemes , Roles =SystemData.Role.Admin)]
+    public class SystemUserController : BasicController
     {
         private readonly IGenericRepository<SystemUser> _systemUserRepository;
 
@@ -38,8 +38,7 @@ namespace FypProject.Controllers
             try
             {
                 var sysUser = _systemUserRepository.List().Where(c => c.userName == systemUser.userName).FirstOrDefault();
-
-                if (systemUser != null) throw new BusinessException("Duplicate user name found");
+                if (sysUser != null) throw new BusinessException("Duplicate user name found");
                 systemUser.createdBy = User.Identity.Name;
                 systemUser.Password = BCrypt.Net.BCrypt.HashPassword(systemUser.Password);
                 _systemUserRepository.Add(systemUser);
@@ -47,7 +46,7 @@ namespace FypProject.Controllers
             }
             catch (Exception ex)
             {
-                return SetMessage(ex: ex);
+                return SetError(ex: ex);
             }
         }
 
@@ -65,17 +64,17 @@ namespace FypProject.Controllers
                 int recordsTotal = 0;
 
                 // getting all Customer data  
-                var customerData = base.getList(_systemUserRepository);
+                var customerData = _systemUserRepository.List().ToList();
                 List<int> countId = new List<int>();
                 int count = 1;
-                foreach (var cD in customerData.DataList)
+                foreach (var cD in customerData)
                 {
                     customData.Add(new SysUserCustomData { customId = count, Id = cD.Id, userName = cD.userName, createdBy = cD.createdBy, createdOn = cD.createdOn });
                     count++;
                 }
                 base.dataLoad(ref start, ref length, ref pageSize, ref skip);
                 //total number of rows counts   
-                recordsTotal = customerData.DataList.Count;
+                recordsTotal = customerData.Count;
                 //Paging 
 
                 //Returning Json Data  
@@ -85,22 +84,23 @@ namespace FypProject.Controllers
             }
             catch (Exception e)
             {
-                return this.SetMessage(ex: e);
+                return SetError(e);
             }
 
         }
         [HttpPost]
         public JsonResult DeleteSystemUser(int Id)
         {
-            var sysUser = _systemUserRepository.List().Where(c => c.Id == Id).FirstOrDefault();
-            if (sysUser != null)
+            try
             {
+                if (Id <= 0) throw new BusinessException("Invalid user id");
+                var sysUser = _systemUserRepository.List().Where(c => c.Id == Id).FirstOrDefault();
                 _systemUserRepository.Delete(Id);
                 return SetMessage(SystemData.ResponseStatus.Success, "User deleted successfully.");
             }
-            else
+            catch(Exception ex)
             {
-                return SetMessage(SystemData.ResponseStatus.Error, "Unable to delete User.");
+               return SetError(ex);
             }
 
         }

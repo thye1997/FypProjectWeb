@@ -14,22 +14,20 @@ using FypProject.Config;
 using FypProject.Repository;
 using FypProject.Services;
 namespace FypProject.Controllers
-{   
-    [Authorize]
-    public class UserController : BaseController<User, UserViewModel>
+{
+    [Authorize(AuthenticationSchemes = authenticationSchemes)]
+    public class UserController : BasicController
     {
         private IUserRepository _userRepository;
-        private readonly IGenericRepository<MedicalHistory> _medHistoryRepository;
         private readonly UserService userService;
         private readonly MedicalHistoryService medicalHistoryService;
         protected override string pageName { get; set; } = SystemData.View.UserIndex;
 
-        public UserController(IUserRepository userRepository, IGenericRepository<MedicalHistory> medHistoryRepository, UserService userService,
+        public UserController(IUserRepository userRepository,  UserService userService,
             MedicalHistoryService medicalHistoryService)
         {
             this.userService = userService;
             _userRepository = userRepository;
-            _medHistoryRepository = medHistoryRepository;
             this.medicalHistoryService = medicalHistoryService;
         }
         public IActionResult Index()
@@ -55,7 +53,7 @@ namespace FypProject.Controllers
             }
             catch (Exception ex)
             {
-               return SetMessage(ex: ex);
+               return SetError(ex);
             }           
         }
         //done
@@ -69,31 +67,22 @@ namespace FypProject.Controllers
             }
             catch (Exception ex)
             {
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
         //done
         [HttpPost]
         public JsonResult UpdateDetail(User user)
         {
-            bool isSuccess = false;
             try
             {
              var result =  userService.UpdateUserDetail(user);
-                if (result != null)
-                {
-                    isSuccess = true;
-                }
-                else
-                {
-                    isSuccess = false;
-                }
+                return SetMessage(SystemData.ResponseStatus.Success, "Patient details updated successfully.");
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-                isSuccess = false;
+                return SetError(ex);
             }
-            return SetMessage(data:new { success = isSuccess });
         }
         //done
         public IActionResult UserDetail(int id)
@@ -133,7 +122,7 @@ namespace FypProject.Controllers
             {
                 Debug.Write($"{e}");
 
-                return this.SetMessage(ex: e);
+                return SetError(e);
             }
         }
         [HttpPost]
@@ -153,7 +142,7 @@ namespace FypProject.Controllers
                 Debug.Write($"{searchValue}");
 
                 // getting all Customer data  
-                var customerData = base.getList(_userRepository);
+                var customerData = _userRepository.List().ToList();
                 List<int> countId = new List<int>();
                 int count = 1;
                 if (!string.IsNullOrEmpty(searchValue))
@@ -167,12 +156,12 @@ namespace FypProject.Controllers
                     recordsTotal = searchData.Count;
                 }
                 else {
-                    foreach (var cD in customerData.DataList)
+                    foreach (var cD in customerData)
                     {
                         customData.Add(new PatientUserCustomData { customId = count, Id = cD.Id, fullName = cD.FullName, NRIC = cD.NRIC, Gender = cD.Gender, phoneNumber = cD.PhoneNumber });
                         count++;
                     }
-                    recordsTotal = customerData.DataList.Count;
+                    recordsTotal = customerData.Count;
                 }
 
                 base.dataLoad(ref start, ref length, ref pageSize, ref skip);
@@ -188,7 +177,7 @@ namespace FypProject.Controllers
             {
                 Debug.Write($"{e}");
 
-                return this.SetMessage(ex: e);
+                return SetError(e);
             }
 
         }
@@ -202,7 +191,7 @@ namespace FypProject.Controllers
             }
             catch(Exception ex)
             {
-               return SetMessage(ex: ex);
+               return SetError(ex);
             }
         }
     }

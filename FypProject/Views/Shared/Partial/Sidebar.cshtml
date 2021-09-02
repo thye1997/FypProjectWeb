@@ -18,7 +18,7 @@
                 <a class="list-group-item list-group-item-action bg-light" id="config-dropdown">Configuration<i class="fa fa-caret-down"></i></a>
                 <div id="config-dropdown-container">
                     <a class="list-group-item list-group-item-action bg-light" asp-controller="QRCode" asp-action="Index">Generate QR Code</a>
-                    @if (User.FindFirst(ClaimTypes.Role).Value == SystemData.Role.Doctor)
+                    @if (User.FindFirst(ClaimTypes.Role).Value == SystemData.Role.Admin)
                     {
                     <a class="list-group-item list-group-item-action bg-light" asp-controller="SystemUser" asp-action="Index">System User</a>
                     }

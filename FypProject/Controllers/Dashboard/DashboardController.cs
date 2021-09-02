@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using FypProject.Base;
 using FypProject.Models;
@@ -10,8 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FypProject.Controllers
 {
-    [Authorize]
-    public class DashboardController : BaseController<Dashboard, DashboardViewModel>
+    [Authorize(AuthenticationSchemes =authenticationSchemes)]
+    public class DashboardController : BasicController
     {
         protected override string pageName { get; set; }
         private readonly DashboardService dashboardService;
@@ -21,8 +22,8 @@ namespace FypProject.Controllers
         }
 
         public IActionResult Index()
-        {       
-                return View(dashboardService.RetrieveWebApptDataCount());                         
+        {
+            return View(dashboardService.RetrieveWebApptDataCount());                         
         }
     }
 }

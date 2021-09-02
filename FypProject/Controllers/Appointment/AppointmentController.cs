@@ -18,14 +18,13 @@ using FypProject.Repository;
 
 namespace FypProject.Controllers
 {    
-    [Authorize]
-    public class AppointmentController : BaseController<Appointment,AppointmentViewModel>
+    [Authorize(AuthenticationSchemes = authenticationSchemes)]
+    public class AppointmentController : BasicController
     {
         protected override string pageName { get; set; } = SystemData.View.AppointmentIndex;
         private string apptSchedulePageName { get; set; } = SystemData.View.AppointmentScheduleIndex;
 
         private readonly AppointmentService apptService;
-        private readonly IUserRepository userRepository;
         private readonly IGenericRepository<SystemUser> sysUserRepository;
         private readonly IConfiguration config;
         private readonly IHttpClientFactory clientFactory;
@@ -33,7 +32,6 @@ namespace FypProject.Controllers
             IGenericRepository<SystemUser> sysUserRepository)
         {
             this.apptService = apptService;
-            this.userRepository = userRepository;
             this.config = config;
             this.clientFactory = clientFactory;
             this.sysUserRepository = sysUserRepository;
@@ -77,7 +75,7 @@ namespace FypProject.Controllers
             catch (Exception e)
             {
                 Debug.Write($"{e}");
-                return this.SetMessage(ex: e);
+                return SetError(e);
 
             }
         }
@@ -109,7 +107,7 @@ namespace FypProject.Controllers
             {
                 Debug.Write($"{e}");
 
-                return this.SetMessage(ex: e);
+                return SetError(e);
             }
         }
         [HttpPost]
@@ -126,7 +124,7 @@ namespace FypProject.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
 
@@ -141,7 +139,7 @@ namespace FypProject.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
 
@@ -158,7 +156,7 @@ namespace FypProject.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
 
@@ -179,7 +177,7 @@ namespace FypProject.Controllers
             }
             catch(Exception ex)
             {
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
 
@@ -200,7 +198,7 @@ namespace FypProject.Controllers
             }
             catch (Exception ex)
             {
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
 
@@ -214,7 +212,7 @@ namespace FypProject.Controllers
             }
             catch (Exception ex)
             {
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
 
@@ -235,7 +233,7 @@ namespace FypProject.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
 
@@ -251,7 +249,7 @@ namespace FypProject.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
 
@@ -265,7 +263,7 @@ namespace FypProject.Controllers
             }
             catch (Exception ex)
             {
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
 
@@ -283,7 +281,7 @@ namespace FypProject.Controllers
             }
             catch (Exception ex)
             {
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
 
@@ -297,7 +295,7 @@ namespace FypProject.Controllers
             }
             catch (Exception ex)
             {
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
     }

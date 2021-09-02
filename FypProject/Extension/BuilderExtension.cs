@@ -56,8 +56,8 @@ namespace Microsoft.EntityFrameworkCore
         {
             modelBuilder.Entity<SystemUser>().HasData(
                 new SystemUser { Id = 1, 
-                    Role = SystemData.Role.Doctor,
-                    userName = "Doctor_1",
+                    Role = SystemData.Role.Admin,
+                    userName = "Admin_1",
                     createdBy="Admin",
                     createdOn = "18/08/2021 12:24 AM",
                     Password = BCrypt.Net.BCrypt.HashPassword("123456")                 

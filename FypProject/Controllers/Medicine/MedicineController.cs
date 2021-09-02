@@ -14,9 +14,9 @@ using FypProject.Repository;
 
 
 namespace FypProject.Controllers.Prescription
-{  
-    [Authorize]
-    public class MedicineController : BaseController<Medicine,MedicineViewModel>
+{
+    [Authorize(AuthenticationSchemes = authenticationSchemes)]
+    public class MedicineController : BasicController
     {
         private readonly IGenericRepository<Medicine> _medicineRepository;
 
@@ -49,17 +49,23 @@ namespace FypProject.Controllers.Prescription
                 }
                 catch (Exception ex)
                 {
-                    return SetMessage(ex: ex);
+                    return SetError(ex);
                 }           
         }
 
         [HttpPost]
         public JsonResult DeleteMedicine(int Id)
         {
-            var medicine = _medicineRepository.List().Where(c => c.Id == Id).FirstOrDefault();
-            medicine.isActive = false;
-            _medicineRepository.SaveChanges();
-            return SetMessage(SystemData.ResponseStatus.Success, "Medicine deleted successfully.");
+            try
+            {
+                var medicine = _medicineRepository.List().Where(c => c.Id == Id).FirstOrDefault();
+                medicine.isActive = false;
+                _medicineRepository.SaveChanges();
+                return SetMessage(SystemData.ResponseStatus.Success, "Medicine deleted successfully.");
+            }catch(Exception ex)
+            {
+                return SetError(ex);
+            }
         }
 
         [HttpPost]
@@ -76,7 +82,7 @@ namespace FypProject.Controllers.Prescription
                 int recordsTotal = 0;
 
                 // getting all Customer data  
-                var medicineData = base.getList(_medicineRepository).DataList.Where(c => c.isActive).ToList();
+                var medicineData = _medicineRepository.List().Where(c => c.isActive).ToList();
                 List<int> countId = new List<int>();
                 int count = 1;
                 foreach (var cD in medicineData)
@@ -97,20 +103,27 @@ namespace FypProject.Controllers.Prescription
             }
             catch (Exception e)
             {
-                return this.SetMessage(ex: e);
+                return SetError(e);
             }
 
         }
         [HttpPost]
         public JsonResult GetSpecificTypeMedicine(string Type)
         {
-            var result = _medicineRepository.List().Where(c => c.Type == Type && c.isActive)
+            try
+            {
+                var result = _medicineRepository.List().Where(c => c.Type == Type && c.isActive)
                         .Select(med => new MedicineListViewModel
                         {
                             Id = med.Id,
                             medName = med.medName
                         }).ToList();
-            return SetMessage(data: new { list = result });
+                return SetMessage(data: new { list = result });
+            }
+            catch(Exception ex)
+            {
+               return SetError(ex);
+            }
         }
     }
     class MedicineCustomData

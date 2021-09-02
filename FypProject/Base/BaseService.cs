@@ -15,6 +15,7 @@ namespace FypProject.Base
         private readonly CronExpression _expression;
         private readonly TimeZoneInfo _timeZoneInfo;
 
+        public abstract Task DoWork(CancellationToken cancellationToken);
         protected BaseService(string cronExpression, TimeZoneInfo timeZoneInfo)
         {
             _expression = CronExpression.Parse(cronExpression, CronFormat.Standard);
@@ -30,7 +31,7 @@ namespace FypProject.Base
            await SetupTimer(cancellationToken);
             //await ScheduleJob(cancellationToken);
         }
-        protected virtual async Task ScheduleJob(CancellationToken cancellationToken)
+        /*protected virtual async Task ScheduleJob(CancellationToken cancellationToken)
         {
             Debug.WriteLine($"cancellation token value => {cancellationToken.IsCancellationRequested.ToString()}");
             var next = _expression.GetNextOccurrence(DateTimeOffset.Now, _timeZoneInfo);
@@ -59,18 +60,18 @@ namespace FypProject.Base
 
                    /* if (!cancellationToken.IsCancellationRequested)
                     {
-                    }*/
+                    }
                 };
                 _timer.Start();
             }
             await Task.CompletedTask;
-        }
+        }*/
 
-        public virtual async Task DoWork(CancellationToken cancellationToken)
+        /*public virtual async Task DoWork(CancellationToken cancellationToken)
         {
             Debug.WriteLine($"is this runned?");
             await Task.Delay(5000, cancellationToken);  // do the work
-        }
+        }*/
 
         public virtual async Task StopAsync(CancellationToken cancellationToken)
         {
@@ -93,11 +94,19 @@ namespace FypProject.Base
             {
                 var nextScheduled = interval.Value - DateTimeOffset.Now;
 
-                _timer = new System.Timers.Timer(nextScheduled.TotalMilliseconds);
+                if (_timer == null)
+                {
+                    _timer = new System.Timers.Timer(nextScheduled.TotalMilliseconds);
+
+                }
+
                 _timer.Enabled = true;
                 _timer.AutoReset = true;
                 _timer.Elapsed += async (sender, args) => {
                     await DoWork(cancellationToken);
+                    Dispose();
+                    _timer = null;
+                    await SetupTimer(cancellationToken); 
                 };
                 _timer.Start();
             }

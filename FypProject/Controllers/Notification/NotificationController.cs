@@ -15,8 +15,8 @@ using FypProject.Repository;
 
 namespace FypProject.Controllers
 {
-    [Authorize]
-    public class NotificationController : BaseController<Notification,NotificationViewModel>
+    [Authorize(AuthenticationSchemes = authenticationSchemes)]
+    public class NotificationController : BasicController
     {
         private readonly IGenericRepository<Notification> notiRepository;
         private readonly IGenericRepository<Account> accRepository;
@@ -56,15 +56,15 @@ namespace FypProject.Controllers
             {
                 Debug.Write($"{e}");
 
-                return this.SetMessage(ex: e);
+                return SetError(e);
             }
         }
 
-        public JsonResult AddNotification(Notification obj)
+        public async Task<JsonResult> AddNotification(Notification obj)
         {
             try
             {
-                firebaseNotificationHelper.SendNotifcation(accRepository, obj);
+               await firebaseNotificationHelper.SendNotifcation(accRepository, obj);
                 obj.createdBy = User.Identity.Name;
                 notiRepository.Add(obj);
                 return SetMessage(SystemData.ResponseStatus.Success, "Notification sent successfully.");
@@ -72,7 +72,7 @@ namespace FypProject.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
-                return SetMessage(ex: ex);
+                return SetError(ex);
             }
         }
     }

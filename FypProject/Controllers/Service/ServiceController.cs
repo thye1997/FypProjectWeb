@@ -17,8 +17,8 @@ using FypProject.Repository;
 
 namespace FypProject.Controllers
 {
-    [Authorize]
-    public class ServiceController : BaseController<Service,ServiceViewModel>
+    [Authorize(AuthenticationSchemes = authenticationSchemes)]
+    public class ServiceController : BasicController
     {
         private readonly IGenericRepository<Service> _serviceRepository;
         private readonly IGenericRepository<ServiceType> serviceTypeRepository;
@@ -58,7 +58,7 @@ namespace FypProject.Controllers
                 }
                 catch (Exception ex)
                 {
-                return SetMessage(ex: ex);
+                return SetError(ex);
                 }            
         }
 
@@ -74,7 +74,7 @@ namespace FypProject.Controllers
                 var draw = HttpContext.Request.Form["draw"].FirstOrDefault();
                 int recordsTotal = 0;
                 // getting all Customer data  
-                var customerData = base.getList(_serviceRepository).DataList.Where(c=>c.isActive).ToList();
+                var customerData = _serviceRepository.List().Where(c => c.isActive).ToList();
 
                 List<int> countId = new List<int>();
                 int count = 1;
@@ -94,19 +94,27 @@ namespace FypProject.Controllers
                 return Json(new { draw= draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data});
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return this.SetMessage(ex: e);
+                return SetError(ex);
             }
 
         }
         [HttpPost]
         public JsonResult DeleteService(int Id)
         {
-            var service = _serviceRepository.List().Where(c => c.Id == Id).FirstOrDefault();
-            service.isActive = false;
-            _serviceRepository.SaveChanges();
-            return SetMessage(SystemData.ResponseStatus.Success, "Service deleted successfully.");
+            try
+            {
+                var service = _serviceRepository.List().Where(c => c.Id == Id).FirstOrDefault();
+                service.isActive = false;
+                _serviceRepository.SaveChanges();
+                return SetMessage(SystemData.ResponseStatus.Success, "Service deleted successfully.");
+            }
+            catch(Exception ex)
+            {
+               return SetError(ex);
+            }
+
         }
     }
 

@@ -19,8 +19,8 @@ using FypProject.Repository;
 
 namespace FypProject.Controllers
 {
-    [Authorize]
-    public class QRCodeController : BaseController<FypProject.Models.QRCode, QRCodeViewModel>
+    [Authorize(AuthenticationSchemes = authenticationSchemes)]
+    public class QRCodeController : BasicController
     {
         private readonly IGenericRepository<FypProject.Models.QRCode> qrCodeRepository;
 
@@ -45,10 +45,10 @@ namespace FypProject.Controllers
             {
                 int recordsTotal = 0;
                 // getting all Customer data  
-                var result = base.getList(qrCodeRepository);
+                var result = qrCodeRepository.List().ToList();
                 var formattedResult = new List<QRCodeViewModel>();
                 var count = 1;
-                foreach(var n in result.DataList)
+                foreach(var n in result)
                 {
                     formattedResult.Add(new QRCodeViewModel
                     {
@@ -70,7 +70,7 @@ namespace FypProject.Controllers
             {
                 Debug.Write($"{e}");
 
-                return this.SetMessage(ex: e);
+                return SetError(e);
             }
         }
 
