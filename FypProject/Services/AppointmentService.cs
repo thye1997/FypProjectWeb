@@ -203,7 +203,7 @@ namespace FypProject.Services
             return serviceList;
         }
 
-        public async Task AddAppointment(Appointment obj, User user, int patientType, IConfiguration config,IHttpClientFactory clientFactory)
+        public async Task AddAppointment(Appointment obj, User user, int patientType)
         {
             if(patientType == SystemData.PatientType.NewPatient)
             {
@@ -218,22 +218,14 @@ namespace FypProject.Services
                 int duration = slotDurationRepository.List().Where(c => c.isActive == true).FirstOrDefault().slotDuration; // retrieve duration per appt
                 obj.RequestTime = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
                 obj.isActive = true;
-                if (obj.ApptType == (int)SystemData.AppointmentType.WalkIn)
-                {
-                    obj.Date = DateTime.Now.ToString("dd/MM/yyyy");
-                    obj.StartTime = null;
-                    obj.EndTime = null;
-                    obj.Status = (int)SystemData.AppointmentStatus.InQueue;
-                }
-                else
-                {
+                
                     obj.Status = (int)SystemData.AppointmentStatus.Confirmed;
-                }
+                
                 if (obj.ApptType == (int)SystemData.AppointmentType.Schedule)
                 {
                     obj.EndTime = DateTime.Parse(obj.StartTime).AddMinutes(duration).ToString("hh:mm tt");
                     var patient = userRepository.Find(obj.userId);//get patient details from DB
-                    await twilioHelper.SendSMS(obj);
+                    //await twilioHelper.SendSMS(obj);
 
                 }
                 apptRepository.Add(obj);
@@ -286,6 +278,7 @@ namespace FypProject.Services
         }
         public AppointmentDetailViewModel AppointmentDetail(int Id)
         {
+            if (Id <= 0) throw new BusinessException("Invalid Appointment Id.");
             return apptRepository.GetAppointmentDetail(Id);
         }
         public void AddAppointmentNewPatient(Appointment obj, int userId)
@@ -309,12 +302,14 @@ namespace FypProject.Services
         
         public void CheckInAppointment(int Id)
         {
+            if (Id <= 0) throw new BusinessException("Invalid Appointment Id.");
             var appt = apptRepository.List().Where(c => c.Id == Id).FirstOrDefault();
             if (appt != null) appt.Status = (int)SystemData.AppointmentStatus.InQueue;
             apptRepository.SaveChanges();
         }
         public string CancelAppointment (int Id)
         {
+            if (Id <= 0) throw new BusinessException("Invalid Appointment Id.");
             var appt = apptRepository.List().Where(c => c.Id == Id).FirstOrDefault();
             if (appt != null) appt.Status = (int)SystemData.AppointmentStatus.Cancelled;
             apptRepository.SaveChanges();

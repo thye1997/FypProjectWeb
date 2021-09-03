@@ -57,20 +57,10 @@ namespace FypProject.Controllers
         [HttpPost]
         public JsonResult RetrieveSpecialHoliday(string dataRequest)
         {
-            string start = null;
-            string length = null;
-            int pageSize = 0, skip = 0;
             try
             {
-                int recordsTotal = 0;
-                // getting all Customer data  
-                var result = apptService.GetSpecialHoliday();                
-                recordsTotal = result.spHolidayList.Count;
-                base.dataLoad(ref start, ref length, ref pageSize, ref skip);
-
-                //Returning Json Data  
-                var data = result.spHolidayList.Skip(skip).Take(pageSize).ToList();
-                return Json(new { recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+                var dataList = apptService.GetSpecialHoliday();
+                return this.DataTableResult(dict, dataList.spHolidayList);
             }
             catch (Exception e)
             {
@@ -82,26 +72,15 @@ namespace FypProject.Controllers
         [HttpPost]
         public JsonResult RetriveAppointmentList(int[] apptStatus, int today)
         {
-            Debug.WriteLine("today :=>" + today);
-            string start = null;
-            string length = null;
-            int pageSize = 0, skip = 0;
             try
             {
-                int recordsTotal = 0;
-                // getting all Customer data  
-                var searchValue = Request.Form["search[value]"].FirstOrDefault().ToLower();
-                var result = apptService.GetAppointmentList(apptStatus,searchValue);
+                var searchValue = dict["search[value]"]?.ToLower();
+                var dataList = apptService.GetAppointmentList(apptStatus,searchValue);
                 if(today == 1) //done for today
                 {
-                    result = apptService.GetAppointmentList(apptStatus, searchValue).Where(c => DateTime.Parse(c.Date) == DateTime.Today).ToList();
+                    dataList = apptService.GetAppointmentList(apptStatus, searchValue).Where(c => DateTime.Parse(c.Date) == DateTime.Today).ToList();
                 }
-                recordsTotal = result.Count;
-                base.dataLoad(ref start, ref length, ref pageSize, ref skip);
-
-                //Returning Json Data  
-                var data = result.Skip(skip).Take(pageSize).ToList();
-                return Json(new { recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+                return this.DataTableResult<AppointmentViewModel,Appointment>(dict, dataList);
             }
             catch (Exception e)
             {
@@ -118,7 +97,7 @@ namespace FypProject.Controllers
             {
                 var sysUserId = Convert.ToInt32(User.FindFirst("Id").Value.ToString());
                 obj.doctorId = sysUserId;
-               await apptService.AddAppointment(obj, user, patientType, config, clientFactory);
+               await apptService.AddAppointment(obj, user, patientType);
                 return SetMessage(SystemData.ResponseStatus.Success, "Appointment added successfully.");
             }
             catch (Exception ex)
@@ -163,8 +142,15 @@ namespace FypProject.Controllers
         [HttpPost]
         public JsonResult LoadSlotTime(string slot)
         {
-            var result = apptService.LoadTimeSlot(slot);
-            return SetMessage(data: new { timeslots = result });
+            try
+            {
+                var result = apptService.LoadTimeSlot(slot);
+                return SetMessage(data: new { timeslots = result });
+            }
+            catch(Exception ex)
+            {
+                return SetError(ex);
+            }
         }
 
         [HttpPost]
@@ -184,8 +170,15 @@ namespace FypProject.Controllers
         [HttpPost]
         public JsonResult LoadSpecificTimeSlot(string date, int slot)
         {
-            var result = apptService.LoadSpecificTimeSlot(date,slot);
-            return Json(new { timeslots = result });
+            try
+            {
+                var result = apptService.LoadSpecificTimeSlot(date, slot);
+                return Json(new { timeslots = result });
+            }
+            catch(Exception ex)
+            {
+                return SetError(ex);
+            }
         }
 
         [HttpPost]
@@ -218,8 +211,15 @@ namespace FypProject.Controllers
 
         public IActionResult AppointmentDetail(int Id)
         {
-            var viewModel = apptService.AppointmentDetail(Id);
-            return View(SystemData.ViewPagePath.ApptDetailView, viewModel);
+            try
+            {
+                var viewModel = apptService.AppointmentDetail(Id);
+                return View(SystemData.ViewPagePath.ApptDetailView, viewModel);
+            }
+            catch(Exception ex)
+            {
+               return SetError(ex);
+            }
         }
 
         [HttpPost]

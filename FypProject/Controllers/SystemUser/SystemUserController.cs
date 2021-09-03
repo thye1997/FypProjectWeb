@@ -53,34 +53,11 @@ namespace FypProject.Controllers
         [HttpPost]
         public JsonResult LoadData()
         {
-            string start = null;
-            string length = null;
-            int pageSize = 0, skip = 0;
-            List<SysUserCustomData> customData = new List<SysUserCustomData>();
             try
             {
-                var draw = HttpContext.Request.Form["draw"].FirstOrDefault();
-              
-                int recordsTotal = 0;
-
-                // getting all Customer data  
-                var customerData = _systemUserRepository.List().ToList();
-                List<int> countId = new List<int>();
-                int count = 1;
-                foreach (var cD in customerData)
-                {
-                    customData.Add(new SysUserCustomData { customId = count, Id = cD.Id, userName = cD.userName, createdBy = cD.createdBy, createdOn = cD.createdOn });
-                    count++;
-                }
-                base.dataLoad(ref start, ref length, ref pageSize, ref skip);
-                //total number of rows counts   
-                recordsTotal = customerData.Count;
-                //Paging 
-
-                //Returning Json Data  
-                var data = customData.Skip(skip).Take(pageSize).ToList();
-                return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
-
+                var dataList = _systemUserRepository.List().ToList();
+                return this.DataTableResult(dict, dataList);
+                //yea boi cleaner
             }
             catch (Exception e)
             {
@@ -105,13 +82,38 @@ namespace FypProject.Controllers
 
         }
     }
-    class SysUserCustomData
+
+    /* return this.DataTableResult(dict, customerData,
+       (obj) =>
+       {    
+           foreach(var n in obj)
+           {
+              // n.Id = count;
+
+              count++;
+           }
+       }
+      );*/
+    /* return this.DataTableResult(dict, customerData,
+         obj =>
+         {
+              count = 0;
+             foreach(var n in customerData)
+             {
+                 obj.Add(new
+                 {
+                     customId = count++,
+                     Id = n.Id,
+                     userName = n.userName,
+                     createdBy = n.createdBy,
+                     createdOn = n.createdOn                                
+               });
+             }
+         },
+
+         true);*/
+   /* class SysUserCustomData : SystemUser
     {
         public int customId { set; get; }
-        public int Id { set; get; }
-        public string userName { set; get; }
-        public string createdOn { set; get; }
-        public string createdBy { set; get; }
-
-    }
+    }*/
 }

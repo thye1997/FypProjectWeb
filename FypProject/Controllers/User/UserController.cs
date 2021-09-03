@@ -93,29 +93,10 @@ namespace FypProject.Controllers
         [HttpPost] 
         public JsonResult getMedHistory(int Id)
         {
-            string start = null;
-            string length = null;
-            int pageSize = 0, skip = 0;
-            List<MedHistoryCustomData> customData = new List<MedHistoryCustomData>();
             try
             {
-                var draw = HttpContext.Request.Form["draw"].FirstOrDefault();
-
-                int recordsTotal = 0;
-
-                // getting all Customer data  
-                //var customerData = (List<MedicalHistory>)_medHistoryRepository.getList(Id);
-                var customerData = medicalHistoryService.RetrieveMedicalHistoryList(Id);
-                List<int> countId = new List<int>();
-
-                    recordsTotal = customerData.Count;
-                base.dataLoad(ref start, ref length, ref pageSize, ref skip);
-                //total number of rows counts   
-                //Paging 
-
-                //Returning Json Data  
-                var data = customerData.Skip(skip).Take(pageSize).ToList();
-                return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+                var dataList = medicalHistoryService.RetrieveMedicalHistoryList(Id);
+                return this.DataTableResult(dict, dataList);
 
             }
             catch (Exception e)
@@ -128,49 +109,21 @@ namespace FypProject.Controllers
         [HttpPost]
         public JsonResult LoadData()
         {
-            string start = null;
-            string length = null;
-            int pageSize = 0, skip = 0;
-            List<PatientUserCustomData> customData = new List<PatientUserCustomData>();
             try
             {
-                var draw = HttpContext.Request.Form["draw"].FirstOrDefault();
-
-                int recordsTotal = 0;
-                // Search Value from (Search box)  
                 var searchValue = Request.Form["search[value]"].FirstOrDefault().ToLower();
                 Debug.Write($"{searchValue}");
 
-                // getting all Customer data  
-                var customerData = _userRepository.List().ToList();
-                List<int> countId = new List<int>();
-                int count = 1;
+                var dataList = (List<User>)null;
                 if (!string.IsNullOrEmpty(searchValue))
                 {
-                    var searchData = (List<User>)_userRepository.GetUserListBySearch(searchValue);
-                    foreach (var cD in searchData)
-                    {
-                        customData.Add(new PatientUserCustomData { customId = count, Id = cD.Id, fullName = cD.FullName, NRIC = cD.NRIC, Gender = cD.Gender, phoneNumber = cD.PhoneNumber });
-                        count++;
-                    }
-                    recordsTotal = searchData.Count;
+                     dataList = (List<User>)_userRepository.GetUserListBySearch(searchValue);
                 }
                 else {
-                    foreach (var cD in customerData)
-                    {
-                        customData.Add(new PatientUserCustomData { customId = count, Id = cD.Id, fullName = cD.FullName, NRIC = cD.NRIC, Gender = cD.Gender, phoneNumber = cD.PhoneNumber });
-                        count++;
-                    }
-                    recordsTotal = customerData.Count;
+                    dataList = _userRepository.List().ToList();
                 }
 
-                base.dataLoad(ref start, ref length, ref pageSize, ref skip);
-                //total number of rows counts   
-                //Paging 
-
-                //Returning Json Data  
-                var data = customData.Skip(skip).Take(pageSize).ToList();
-                return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+                return this.DataTableResult(dict, dataList);
 
             }
             catch (Exception e)

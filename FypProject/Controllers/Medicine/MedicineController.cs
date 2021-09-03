@@ -28,7 +28,7 @@ namespace FypProject.Controllers.Prescription
         }
         public IActionResult Index()
         {
-            return View("MedicineIndex");
+            return Index();
         }
 
         [HttpPost]
@@ -71,35 +71,11 @@ namespace FypProject.Controllers.Prescription
         [HttpPost]
         public JsonResult LoadData()
         {
-            string start = null;
-            string length = null;
-            int pageSize = 0, skip = 0;
-            List<MedicineCustomData> customData = new List<MedicineCustomData>();
             try
-            {
-                var draw = HttpContext.Request.Form["draw"].FirstOrDefault();
-              
-                int recordsTotal = 0;
-
+            {              
                 // getting all Customer data  
-                var medicineData = _medicineRepository.List().Where(c => c.isActive).ToList();
-                List<int> countId = new List<int>();
-                int count = 1;
-                foreach (var cD in medicineData)
-                {
-                    customData.Add(new MedicineCustomData { customId = count, Type= cD.Type, Id = cD.Id, medName = cD.medName, createdBy = cD.createdBy, createdOn = cD.createdOn });
-                    count++;
-                }
-                base.dataLoad(ref start, ref length, ref pageSize, ref skip);
-
-                //total number of rows counts   
-                recordsTotal = medicineData.Count;
-                //Paging 
-
-                //Returning Json Data  
-                var data = customData.Skip(skip).Take(pageSize).ToList();
-                return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
-
+                var dataList = _medicineRepository.List().Where(c => c.isActive).ToList();
+                return this.DataTableResult(dict, dataList);
             }
             catch (Exception e)
             {
@@ -126,7 +102,7 @@ namespace FypProject.Controllers.Prescription
             }
         }
     }
-    class MedicineCustomData
+   /* class MedicineCustomData
     {
         public int customId { set; get; }
         public int Id { set; get; }
@@ -135,5 +111,5 @@ namespace FypProject.Controllers.Prescription
         public string createdOn { set; get; }
         public string createdBy { set; get; }
 
-    }
+    }*/
 }

@@ -38,19 +38,10 @@ namespace FypProject.Controllers
 
         public JsonResult NotificationList()
         {
-            string start = null;
-            string length = null;
-            int pageSize = 0, skip = 0;
             try
             {
-                int recordsTotal = 0;
-                var result = notiRepository.List().ToList();
-                recordsTotal = result.Count;
-                base.dataLoad(ref start, ref length, ref pageSize, ref skip);
-
-                //Returning Json Data  
-                var data = result.Skip(skip).Take(pageSize).ToList();
-                return Json(new { recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+                var dataList = notiRepository.List().ToList();
+                return this.DataTableResult(dict, dataList);
             }
             catch (Exception e)
             {

@@ -136,6 +136,13 @@ namespace FypProject.Config
         {
             public const string ConfirmedApptMsg = "Your appointment has been confirmed and the details as below:\n";
         }
+        public static class DatatableRequest
+        {
+            public const string draw = "draw";
+            public const string start = "start";
+            public const string length = "length";
+        }
+
 
     }
 }

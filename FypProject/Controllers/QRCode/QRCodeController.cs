@@ -45,8 +45,9 @@ namespace FypProject.Controllers
             {
                 int recordsTotal = 0;
                 // getting all Customer data  
-                var result = qrCodeRepository.List().ToList();
-                var formattedResult = new List<QRCodeViewModel>();
+                var dataList = qrCodeRepository.List().ToList();
+                return this.DataTableResult(dict, dataList);
+               /* var formattedResult = new List<QRCodeViewModel>();
                 var count = 1;
                 foreach(var n in result)
                 {
@@ -64,7 +65,7 @@ namespace FypProject.Controllers
                 base.dataLoad(ref start, ref length, ref pageSize, ref skip);
                 //Returning Json Data  
                 var data = formattedResult.Skip(skip).Take(pageSize).ToList();
-                return Json(new { recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+                return Json(new { recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });*/
             }
             catch (Exception e)
             {

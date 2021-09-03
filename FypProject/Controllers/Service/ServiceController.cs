@@ -65,33 +65,15 @@ namespace FypProject.Controllers
         [HttpPost]
         public JsonResult LoadData()
         {
-            List<ServiceCustomData> customData = new List<ServiceCustomData>();
-            string start =null;
-            string length =null;
-            int pageSize=0, skip=0;
             try
             {
-                var draw = HttpContext.Request.Form["draw"].FirstOrDefault();
-                int recordsTotal = 0;
-                // getting all Customer data  
-                var customerData = _serviceRepository.List().Where(c => c.isActive).ToList();
-
-                List<int> countId = new List<int>();
-                int count = 1;
-                foreach(var cD in customerData)
+                var dataList = _serviceRepository.List().Where(c => c.isActive).ToList();
+                var serviceType = serviceTypeRepository.List().ToList();
+                foreach(var obj in dataList)
                 {
-                    customData.Add(new ServiceCustomData { customId=count, Id = cD.Id, serviceType=serviceTypeRepository.List().Where(c=>c.Id == cD.typeId).FirstOrDefault().TypeName, serviceName= cD.serviceName, createdBy=cD.createdBy, createdOn = cD.createdOn});
-                    count++;
+                    obj.serviceType = serviceType.Where(c => c.Id == obj.typeId).FirstOrDefault();
                 }
-                base.dataLoad(ref start, ref length, ref pageSize, ref skip);
-
-                //total number of rows counts   
-                recordsTotal = customerData.Count;
-                //Paging 
-
-                //Returning Json Data  
-                var data = customData.Skip(skip).Take(pageSize).ToList();
-                return Json(new { draw= draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data});
+                return this.DataTableResult(dict, dataList);
 
             }
             catch (Exception ex)
@@ -118,7 +100,7 @@ namespace FypProject.Controllers
         }
     }
 
-     class ServiceCustomData
+   /* class ServiceCustomData
     {
         public int customId { set; get; }
         public int Id { set; get; }
@@ -127,5 +109,5 @@ namespace FypProject.Controllers
         public string createdOn { set; get; }
         public string createdBy { set; get; }
 
-    }
+    }*/
 }
