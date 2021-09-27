@@ -981,3 +981,8 @@ C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\Fy
 C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\obj\Debug\netcoreapp3.1\FypProject.pdb
 C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\obj\Debug\netcoreapp3.1\FypProject.genruntimeconfig.cache
 C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\bin\Debug\netcoreapp3.1\serviceKey.json
+C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
+C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll

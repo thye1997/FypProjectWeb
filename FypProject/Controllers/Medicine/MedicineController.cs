@@ -28,7 +28,7 @@ namespace FypProject.Controllers.Prescription
         }
         public IActionResult Index()
         {
-            return Index();
+            return base.Index();
         }
 
         [HttpPost]

@@ -4,14 +4,16 @@ using FypProject.Models.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FypProject.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210907164244_optionalFKId")]
+    partial class optionalFKId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,7 +113,7 @@ namespace FypProject.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("doctorId")
+                    b.Property<int>("doctorId")
                         .HasColumnType("int");
 
                     b.Property<bool>("isActive")
@@ -536,7 +538,7 @@ namespace FypProject.Migrations
                         new
                         {
                             Id = 1,
-                            Password = "$2a$11$R3Th0j8lSBW4Mh0sM8WmhOl1fB/0svq/lC8qkgdHmkaMfEkno50Dm",
+                            Password = "$2a$11$LG8/09QAi5QUbl6msFxJu.gQ.cql5ex.09aJXPyLc4TiDARYn23F.",
                             Role = "Admin",
                             createdBy = "Admin",
                             createdOn = "18/08/2021 12:24 AM",

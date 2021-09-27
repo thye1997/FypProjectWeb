@@ -25,7 +25,7 @@ namespace FypProject.Models
         public User user { set; get; }
         public List<MedicalPrescriptions> medicalPrescription { set; get; }
         public bool isActive { get; set; } = true;
-        public int doctorId { set; get; }
+        public int? doctorId { set; get; }
         public SystemUser systemUser { set; get; }
         
     }

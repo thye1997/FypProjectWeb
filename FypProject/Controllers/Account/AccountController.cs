@@ -9,6 +9,7 @@ using FypProject.Repository;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FypProject.Controllers
@@ -16,7 +17,9 @@ namespace FypProject.Controllers
     public class AccountController : Controller
     {
         private readonly IGenericRepository<SystemUser> sysUserRepository;
-        public AccountController(IGenericRepository<SystemUser> sysUserRepository)
+        //private readonly UserManager<SystemUser> userManager;
+        public AccountController(IGenericRepository<SystemUser> sysUserRepository) 
+            //UserManager<SystemUser> userManager)
         {
             this.sysUserRepository = sysUserRepository;
         }
