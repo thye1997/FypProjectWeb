@@ -169,7 +169,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                Debug.WriteLine("FCM token => " + updateFirebaseTokenRequest.firebaseToken);
+                Debug.WriteLine("FCM token => " + updateFirebaseTokenRequest.FirebaseToken);
                 var result = accountService.UpdateFirebaseToken(updateFirebaseTokenRequest);
                 return Ok(result);
             }catch(Exception ex)
@@ -236,7 +236,7 @@ namespace FypProject.Controllers
             {
                 var result = (DefaultProfileData)null;
                 Debug.WriteLine("Get default profile data is called");
-                 result  = viewModel.profileId>0? accountService.UpdateDefaultProfileData(viewModel): accountService.GetDefaultProfileData(viewModel);
+                 result  = viewModel.ProfileId>0? accountService.UpdateDefaultProfileData(viewModel): accountService.GetDefaultProfileData(viewModel);
                 return Ok(result);
             }
             catch(Exception ex)

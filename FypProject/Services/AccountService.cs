@@ -30,7 +30,7 @@ namespace FypProject.Services
                 var newAccount = new Account
                 {
                     EmailAddress = accountLoginRequest.EmailAddress,
-                    Password = BCrypt.Net.BCrypt.HashPassword(accountLoginRequest.password),
+                    Password = BCrypt.Net.BCrypt.HashPassword(accountLoginRequest.Password),
                     AppointmentPushReminderEnabled = true,
                     PushNotificationEnabled= true,
                     AppointmentSMSReminderEnabled = true                 
@@ -38,16 +38,16 @@ namespace FypProject.Services
                 accRepository.Add(newAccount);
                 return new AccountLoginResponse
                 {
-                    message = "User Registered Successfully.",
-                    isSuccess = true
+                    Message = "User Registered Successfully.",
+                    IsSuccess = true
                 };
             }
             else
             {
                 return new AccountLoginResponse
                 {
-                    message = "Email Address already Registered.",
-                    isSuccess = false
+                    Message = "Email Address already Registered.",
+                    IsSuccess = false
                 };
             }
         }
@@ -128,27 +128,27 @@ namespace FypProject.Services
                 Debug.WriteLine("account not found");
                 return new AccountLoginResponse
                 {
-                    message = "User account not found",
-                    isSuccess = false
+                    Message = "User account not found",
+                    IsSuccess = false
                 };
             }
             else
             {
-                if(BCrypt.Net.BCrypt.Verify(accountLoginRequest.password, account.Password))
+                if(BCrypt.Net.BCrypt.Verify(accountLoginRequest.Password, account.Password))
                 {
                     return new AccountLoginResponse
                     {
                         AccId = account.Id,
-                        message = "User login success",
-                        isSuccess = true
+                        Message = "User login success",
+                        IsSuccess = true
                     };
                 }
                 else
                 {
                     return new AccountLoginResponse
                     {
-                        message = "Invalid email or password",
-                        isSuccess = false
+                        Message = "Invalid email or password",
+                        IsSuccess = false
                     };
 
                 }      
@@ -163,7 +163,7 @@ namespace FypProject.Services
             {
                 return new DefaultProfileResponse
                 {
-                   accProfileId = HasDefault.Id,
+                   AccProfileId = HasDefault.Id,
                     HasDefault = true
                 };
             }
@@ -260,11 +260,11 @@ namespace FypProject.Services
 
         public GeneralResponse UpdateFirebaseToken(UpdateFirebaseTokenRequest updateFirebaseTokenRequest)
         {
-            var result = accRepository.List().Where(c => c.Id == updateFirebaseTokenRequest.accId).FirstOrDefault();
+            var result = accRepository.List().Where(c => c.Id == updateFirebaseTokenRequest.AccId).FirstOrDefault();
 
             if (result != null)
             {
-                result.FirebaseToken = updateFirebaseTokenRequest.firebaseToken;
+                result.FirebaseToken = updateFirebaseTokenRequest.FirebaseToken;
                 accProfileRepository.SaveChanges();
                 return new GeneralResponse
                 {
@@ -297,29 +297,29 @@ namespace FypProject.Services
             {
                 return new NotificationPrefsResponse
                 {
-                    appPushNotification = account.PushNotificationEnabled,
-                    appReminderPushNotification = account.AppointmentPushReminderEnabled,
-                    smsReminderNotification = account.AppointmentSMSReminderEnabled,
-                    hasAccount = true
+                    AppPushNotification = account.PushNotificationEnabled,
+                    AppReminderPushNotification = account.AppointmentPushReminderEnabled,
+                    SmsReminderNotification = account.AppointmentSMSReminderEnabled,
+                    HasAccount = true
                 };
             }
             else
             {
                 return new NotificationPrefsResponse
                 {
-                    hasAccount = false
+                    HasAccount = false
                 };
             }
         }
         public GeneralResponse UpdateNotificationPreferences(UpdateNotificationPrefsRequest obj)
         {
             var account = (Account)null;
-            account = accRepository.List().Where(c => c.Id == obj.accId).FirstOrDefault();
+            account = accRepository.List().Where(c => c.Id == obj.AccId).FirstOrDefault();
             if (account != null)
             {
-                account.PushNotificationEnabled = obj.appPushNotification;
-                account.AppointmentPushReminderEnabled = obj.appReminderPushNotification;
-                account.AppointmentSMSReminderEnabled = obj.smsReminderNotification;
+                account.PushNotificationEnabled = obj.AppPushNotification;
+                account.AppointmentPushReminderEnabled = obj.AppReminderPushNotification;
+                account.AppointmentSMSReminderEnabled = obj.SmsReminderNotification;
                 accProfileRepository.SaveChanges();
                 return new GeneralResponse
                 {
@@ -348,10 +348,10 @@ namespace FypProject.Services
                 {
                     profileList.Add(new ProfileListResponse
                     {   Id = n.Id,
-                        profileId = n.userId,
-                        fullName = userRepository.List().Where(c => c.Id == n.userId).FirstOrDefault().FullName,
-                        relationship = n.Relationship,
-                        isDefault = n.isDefault
+                        ProfileId = n.userId,
+                        FullName = userRepository.List().Where(c => c.Id == n.userId).FirstOrDefault().FullName,
+                        Relationship = n.Relationship,
+                        IsDefault = n.isDefault
                     });
                 }
 
@@ -386,7 +386,7 @@ namespace FypProject.Services
         }
         public GeneralResponse SwitchDefaultProfile(SwitchProfileRequest obj)
         {
-            var accProfile = accProfileRepository.List().Where(c => c.accountId == obj.accId).ToList();
+            var accProfile = accProfileRepository.List().Where(c => c.accountId == obj.AccId).ToList();
             if (accProfile.Count >0)
             {   foreach(var n in accProfile)
                 {
@@ -419,7 +419,7 @@ namespace FypProject.Services
 
         public DefaultProfileData GetDefaultProfileData(DefaultProfileData obj)
         {
-            var defaultProfileId = accProfileRepository.List().Where(c => c.accountId == obj.accId && c.isDefault).FirstOrDefault().userId;
+            var defaultProfileId = accProfileRepository.List().Where(c => c.accountId == obj.AccId && c.isDefault).FirstOrDefault().userId;
             if(defaultProfileId >0)
             {
                 var defaultProfile = userRepository.List().Where(c => c.Id == defaultProfileId).FirstOrDefault();
@@ -427,13 +427,13 @@ namespace FypProject.Services
                 {
                     return new DefaultProfileData
                     {
-                        accountRegistered = accRepository.List().Where(c => c.Id == obj.accId).FirstOrDefault().EmailAddress,
-                        profileId = defaultProfileId,
+                        AccountRegistered = accRepository.List().Where(c => c.Id == obj.AccId).FirstOrDefault().EmailAddress,
+                        ProfileId = defaultProfileId,
                         NRIC = defaultProfile.NRIC,
-                        fullName = defaultProfile.FullName,
-                        phoneNumber = defaultProfile.PhoneNumber,
+                        FullName = defaultProfile.FullName,
+                        PhoneNumber = defaultProfile.PhoneNumber,
                         DOB = defaultProfile.DOB,
-                        gender = defaultProfile.Gender,
+                        Gender = defaultProfile.Gender,
                     };
                 }
 
@@ -447,13 +447,13 @@ namespace FypProject.Services
        
         public DefaultProfileData UpdateDefaultProfileData(DefaultProfileData obj)
         {
-            var profile = userRepository.List().Where(c => c.Id == obj.profileId).FirstOrDefault();
+            var profile = userRepository.List().Where(c => c.Id == obj.ProfileId).FirstOrDefault();
             Debug.WriteLine("profile id =>" + profile.Id);
             if (profile != null)
             {
-                profile.FullName = obj.fullName;
-                profile.PhoneNumber = obj.phoneNumber;
-                profile.Gender = obj.gender;
+                profile.FullName = obj.FullName;
+                profile.PhoneNumber = obj.PhoneNumber;
+                profile.Gender = obj.Gender;
                 profile.DOB = obj.DOB;
 
                 userRepository.SaveChanges();

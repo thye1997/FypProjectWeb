@@ -97,7 +97,7 @@ function RescheduleAppointment() {
     appointment.Id = $('#apptId').val();
     console.log("this one runned");
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: "/Appointment/RescheduleAppointment",
         dataType: "json",
         data: appointment,
@@ -121,7 +121,7 @@ function CancelAppointment(id) {
     }
     if (id <= 0) {
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "/Appointment/CancelAppointment",
             data: { "Id": cancelId },
             success: function (response) {
@@ -144,7 +144,7 @@ function NextOngoingAppointment(id) {
     }
     if (id <= 0) {
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "/Appointment/ChangeApptStatus",
             data: { "Id": attendId, "Status": 3 },
             success: function (response) {
@@ -170,7 +170,7 @@ function LoadMedHistory() {
         "pageLength": 5,
         "draw": 1,
         "ajax": {
-            "url": "/User/getMedHistory",
+            "url": "/User/GetMedHistory",
             "data": { "Id": userId },
             "type": "POST",
             "datatype": "json",
@@ -251,7 +251,7 @@ function LoadRescheduleModal() {
     var tomorrow = new Date();
     tomorrow.setDate(new Date().getDate() + 1);
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/Appointment/GetApptRequestConfigData",
         dataType: "json",
         async: false,
@@ -301,7 +301,7 @@ $('.reschedule-appt-modal').find('#ApptTimeSlot').change(function (e) {
 
 function PopulateSpecificDateSlot(slot) {
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/Appointment/LoadSpecificTimeSlot",
         dataType: "json",
         data: { slot: slot, date: dateSelected },
@@ -389,7 +389,7 @@ function AddMedPrescriptionList() {
 
 function GetMedicineList(Type) {
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/Medicine/GetSpecificTypeMedicine",
         dataType: "json",
         data: { Type: Type },

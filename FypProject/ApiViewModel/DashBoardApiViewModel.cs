@@ -7,9 +7,9 @@ namespace FypProject.ApiViewModel
 {
     public class DashBoardApiViewModel
     {
-        public int upcomingCount { set; get; }
-        public int pastCount { set; get; }
-        public int noShowCount { set; get; }
-        public AppointmentData apptData { set; get; }
+        public int UpcomingCount { set; get; }
+        public int PastCount { set; get; }
+        public int NoShowCount { set; get; }
+        public AppointmentData ApptData { set; get; }
     }
 }

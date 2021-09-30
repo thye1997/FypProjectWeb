@@ -43,7 +43,6 @@ namespace FypProject.Controllers
         }*/
 
         //done
-        [HttpPost]
         public JsonResult AddUser(User user)
         {
             try
@@ -57,7 +56,6 @@ namespace FypProject.Controllers
             }           
         }
         //done
-        [HttpPost]
         public JsonResult AddMedHistory(UserViewModel obj)
         {
             try
@@ -71,7 +69,6 @@ namespace FypProject.Controllers
             }
         }
         //done
-        [HttpPost]
         public JsonResult UpdateDetail(User user)
         {
             try
@@ -90,8 +87,7 @@ namespace FypProject.Controllers
             return View(userService.UserDetail(id));
         }
 
-        [HttpPost] 
-        public JsonResult getMedHistory(int Id)
+        public JsonResult GetMedHistory(int Id)
         {
             try
             {
@@ -106,7 +102,6 @@ namespace FypProject.Controllers
                 return SetError(e);
             }
         }
-        [HttpPost]
         public JsonResult LoadData()
         {
             try
@@ -134,7 +129,6 @@ namespace FypProject.Controllers
             }
 
         }
-        [HttpPost]
         public JsonResult GetUserList()
         {
             try

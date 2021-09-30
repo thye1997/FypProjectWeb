@@ -59,11 +59,6 @@ namespace FypProject.Repository
             return obj;
         }
 
-        public bool IfExist(T obj)
-        {
-            throw new NotImplementedException();
-        }
-
         public int SaveChanges()
         {
            return _dbContexts.SaveChanges();

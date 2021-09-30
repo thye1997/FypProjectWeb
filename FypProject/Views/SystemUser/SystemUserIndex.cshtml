@@ -155,7 +155,7 @@
         //delete system user after click confirm delete in modal
         function DeleteUser() {
             $.ajax({
-                type: "POST",
+                type: "DELETE",
                 url: "/SystemUser/DeleteSystemUser",
                 data: { "Id": serviceId },
                 success: function (response) {

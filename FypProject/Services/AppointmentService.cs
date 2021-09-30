@@ -181,9 +181,8 @@ namespace FypProject.Services
             TimeSlotHelper.UpdateTimeSlot(obj, timeSlotRepository);
         }
 
-        public int GetSlotDuration(int Id)
+        public int GetSlotDuration()
         {
-            if (Id > 0) return EditSlotDuration(Id);
             var slotDuration = slotDurationRepository.List().Where(c => c.isActive == true).FirstOrDefault().Id;
             return slotDuration;
         }
@@ -369,7 +368,7 @@ namespace FypProject.Services
             var appointmentDataList = new List<AppointmentData>();
             apptRepository.CheckNoShowAppointment();
 
-            var accProfile = accProfileRepository.List().Where(c => c.accountId == obj.accId).ToList();
+            var accProfile = accProfileRepository.List().Where(c => c.accountId == obj.AccId).ToList();
 
             if (accProfile.Count > 0)
             {
@@ -378,13 +377,13 @@ namespace FypProject.Services
                     profileId.Add(n.userId);
                 }
             }
-            if (obj.apptId > 0)
+            if (obj.ApptId > 0)
             { var isCheckin = false;
-                if(obj.apptId == 114 && obj.apptStatusInt == (int)AppointmentStatus.Confirmed)
+                if(obj.ApptId == 114 && obj.ApptStatusInt == (int)AppointmentStatus.Confirmed) // for testing
                 {
                     isCheckin = true;
                 }
-                var apptDetail = apptRepository.GetAppointmentDetail(obj.apptId);
+                var apptDetail = apptRepository.GetAppointmentDetail(obj.ApptId);
                 if (apptDetail != null)
                 {
                     var isAction = !TimeSlotHelper.ReturnTodayDate(apptDetail.Date) && !TimeSlotHelper.ReturnPastTodayDate(apptDetail.Date);
@@ -394,42 +393,42 @@ namespace FypProject.Services
                     }
                     appointmentDataList.Add(new AppointmentData
                     {
-                        accId = obj.accId,
-                        apptId = apptDetail.Id,
-                        apptStatusInt = apptDetail.Status,
-                        apptStatusString = apptDetail.StatusString,
-                        date = apptDetail.Date,
-                        service = apptDetail.Service,
-                        startTime = apptDetail.StartTime,
-                        endTime = apptDetail.EndTime,
+                        AccId = obj.AccId,
+                        ApptId = apptDetail.Id,
+                        ApptStatusInt = apptDetail.Status,
+                        ApptStatusString = apptDetail.StatusString,
+                        Date = apptDetail.Date,
+                        Service = apptDetail.Service,
+                        StartTime = apptDetail.StartTime,
+                        EndTime = apptDetail.EndTime,
                         FullName = apptDetail.FullName,
                         NRIC = apptDetail.NRIC,
                         PhoneNumber = apptDetail.PhoneNumber,
                         Gender = apptDetail.Gender,
                         DOB = apptDetail.DOB,
                         Slot = apptDetail.Slot,
-                        note = apptDetail.Note,
-                        isCheckIn = isCheckin,
-                        isAction = isAction
+                        Note = apptDetail.Note,
+                        IsCheckIn = isCheckin,
+                        IsAction = isAction
                     });
 
                     return appointmentDataList;
                 }
             }
-            var result = apptRepository.GetAppointmentList(obj.apptStatus).Where(c => profileId.Contains(c.userId)).OrderBy(c => DateTime.Parse(c.Date)).ToList();
+            var result = apptRepository.GetAppointmentList(obj.ApptStatus).Where(c => profileId.Contains(c.userId)).OrderBy(c => DateTime.Parse(c.Date)).ToList();
             if (result.Count>0)
             {
                 foreach(var n in result)
                 {
                     appointmentDataList.Add(new AppointmentData
                     {
-                        accId = obj.accId,
-                        apptId = n.Id,
-                        apptStatusString = n.Status,
-                        date = n.Date,
-                        service = n.Service,
-                        startTime = n.StartTime,
-                        endTime = n.EndTime,
+                        AccId = obj.AccId,
+                        ApptId = n.Id,
+                        ApptStatusString = n.Status,
+                        Date = n.Date,
+                        Service = n.Service,
+                        StartTime = n.StartTime,
+                        EndTime = n.EndTime,
                         FullName = n.FullName
                     });
                 }
@@ -444,13 +443,14 @@ namespace FypProject.Services
 
         public GeneralResponse AppointmentAction(RescheduleAppointmentApiViewModel obj)
         {
-            if(obj.actionType == 1)
+            //TODO: give action type a const int
+            if(obj.ActionType == 1)
             {
                 var appt = new Appointment
                 {
-                    Id = obj.apptId,
-                    StartTime = obj.startTime,
-                    Date = obj.date
+                    Id = obj.ApptId,
+                    StartTime = obj.StartTime,
+                    Date = obj.Date
                 };
               RescheduleAppointment(appt);
                 return new GeneralResponse
@@ -459,9 +459,9 @@ namespace FypProject.Services
                     isSuccess = true
                 };
             }
-            else if(obj.actionType == 2)
+            else if(obj.ActionType == 2)
             {
-                CancelAppointment(obj.apptId);
+                CancelAppointment(obj.ApptId);
                 return new GeneralResponse
                 {
                     message = "Appointment cancelled successfully.",
@@ -470,7 +470,7 @@ namespace FypProject.Services
             }
             else
             {
-                CheckInAppointment(obj.apptId);
+                CheckInAppointment(obj.ApptId);
                 return new GeneralResponse
                 {
                     message = "Check In successfully.",
@@ -482,20 +482,20 @@ namespace FypProject.Services
         public GeneralResponse AddAppointmentPatient(AddAppointmentApiViewModel obj)
         {
             int duration = slotDurationRepository.List().Where(c => c.isActive == true).FirstOrDefault().slotDuration; // retrieve duration per appt
-            var profile = accProfileRepository.List().Where(c => c.accountId == obj.accId && c.isDefault).FirstOrDefault();
+            var profile = accProfileRepository.List().Where(c => c.accountId == obj.AccId && c.isDefault).FirstOrDefault();
             var user = userRepository.List().Where(c => c.Id == profile.userId).FirstOrDefault();
             if (profile == null) throw new BusinessException("Profile not exist..");
             var appt = new Appointment
             {
                 userId = user.Id,
                 ApptType = (int)AppointmentType.Schedule,
-                Note = obj.note,
-                Date = obj.date,
-                StartTime = obj.startTime,
-                EndTime = DateTime.Parse(obj.startTime).AddMinutes(duration).ToString("hh:mm tt"),
+                Note = obj.Note,
+                Date = obj.Date,
+                StartTime = obj.StartTime,
+                EndTime = DateTime.Parse(obj.StartTime).AddMinutes(duration).ToString("hh:mm tt"),
                 RequestTime = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"),
                 Status = (int)AppointmentStatus.Confirmed,
-                serviceId = obj.serviceId,      
+                serviceId = obj.ServiceId,      
             };
             apptRepository.Add(appt);
             //twilioHelper.SendSMS(appt, user, httpClientFactory);
@@ -508,10 +508,10 @@ namespace FypProject.Services
 
         public GeneralResponse CheckInAppointmentQR(CheckInAppointmentApiViewModel obj)
         {
-            var qrCode = qrRepository.List().Where(c => c.UniqueString == obj.uniqueString && c.isActive).FirstOrDefault();
+            var qrCode = qrRepository.List().Where(c => c.UniqueString == obj.UniqueString && c.isActive).FirstOrDefault();
             if(qrCode != null)
             {
-                CheckInAppointment(obj.apptId);
+                CheckInAppointment(obj.ApptId);
 
                 return new GeneralResponse
                 {

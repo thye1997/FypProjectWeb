@@ -47,14 +47,14 @@ namespace FypProject.Controllers
             return View(apptSchedulePageName, apptSchedule);
         }
 
-        [HttpPost]
+       // [HttpPut]
         public IActionResult UpdateOffDay(int[] isChecked)
         {          
             var updatedOffDaySchedule =  apptService.UpdateOffDaySchedule(isChecked);
             return PartialView(SystemData.ViewPagePath.WorkDayTableView, updatedOffDaySchedule);
         }
 
-        [HttpPost]
+        //[HttpPost]
         public JsonResult RetrieveSpecialHoliday(string dataRequest)
         {
             try
@@ -69,7 +69,7 @@ namespace FypProject.Controllers
 
             }
         }
-        [HttpPost]
+        //[HttpPost]
         public JsonResult RetriveAppointmentList(int[] apptStatus, int today)
         {
             try
@@ -89,7 +89,7 @@ namespace FypProject.Controllers
                 return SetError(e);
             }
         }
-        [HttpPost]
+        //[HttpPost]
         public async Task<JsonResult> AddAppointment(Appointment obj, User user, int patientType)
         {
             Debug.WriteLine("new user details:=> "+ user.FullName);
@@ -107,7 +107,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpPost]
         public JsonResult AddSpecialHoliday(SpecialHoliday obj)
         {
             try
@@ -122,7 +122,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpGet]
         public JsonResult GetApptRequestConfigData()
         {
             try
@@ -139,7 +139,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpGet]
         public JsonResult LoadSlotTime(string slot)
         {
             try
@@ -153,7 +153,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpPut]
         public JsonResult UpdateTimeSlot(TimeSlot obj)
         {
             try
@@ -167,7 +167,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpGet]
         public JsonResult LoadSpecificTimeSlot(string date, int slot)
         {
             try
@@ -181,12 +181,26 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
-        public JsonResult SlotDuration(int Id)
+        //[HttpGet]
+        public JsonResult GetCurrentSlotDuration()
         {
             try
             {
-               var result= apptService.GetSlotDuration(Id);
+                var result = apptService.GetSlotDuration();
+                return SetMessage(data: result);
+            }
+            catch (Exception ex)
+            {
+                return SetError(ex);
+            }
+        }
+
+       // [HttpPut]
+        public JsonResult EditSlotDuration(int Id)
+        {
+            try
+            {
+               var result= apptService.EditSlotDuration(Id);
                 return SetMessage(SystemData.ResponseStatus.Success, "Slot duration updated successfully.");
             }
             catch (Exception ex)
@@ -195,7 +209,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpPut]
         public JsonResult CheckInAppt(int Id)
         {
             try
@@ -222,7 +236,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpPut]
         public JsonResult RescheduleAppointment(Appointment appt)
         {
             try
@@ -237,7 +251,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpPut]
         public JsonResult UpdateAppointmentDetail(Appointment appt)
         {
             try
@@ -253,7 +267,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpPut]
         public JsonResult CancelAppointment(int Id)
         {
             try
@@ -267,7 +281,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+       // [HttpPut]
         public JsonResult ChangeApptStatus(int Id, int Status)
         {
             try
@@ -285,7 +299,7 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpPost]
         public JsonResult AddAppointmentResult(MedicinePrescriptionViewModel viewModel)
         {     
             try

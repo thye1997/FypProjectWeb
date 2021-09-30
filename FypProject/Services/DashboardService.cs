@@ -43,23 +43,23 @@ namespace FypProject.Services
             {
                 inqueueAppt = new AppointmentData
                 {
-                    apptId = result.Id,
+                    ApptId = result.Id,
                     FullName = result.FullName,
-                    service = result.Service,
-                    date = result.Date,
-                    apptStatusString = result.Status,
-                    startTime = result.StartTime,
-                    endTime = result.EndTime,
+                    Service = result.Service,
+                    Date = result.Date,
+                    ApptStatusString = result.Status,
+                    StartTime = result.StartTime,
+                    EndTime = result.EndTime,
                 };
             }
 
             List<int> passApptStatus = new List<int>() {(int)AppointmentStatus.Completed, (int)AppointmentStatus.Cancelled};
             return new DashBoardApiViewModel
             {
-                upcomingCount = apptList.Where(c => c.Status == (int)AppointmentStatus.Confirmed).Count(),
-                pastCount = apptList.Where(c => passApptStatus.Contains(c.Status)).Count(),
-                noShowCount = apptList.Where(c => c.Status == (int)AppointmentStatus.NoShow).Count(),
-                apptData = inqueueAppt
+                UpcomingCount = apptList.Where(c => c.Status == (int)AppointmentStatus.Confirmed).Count(),
+                PastCount = apptList.Where(c => passApptStatus.Contains(c.Status)).Count(),
+                NoShowCount = apptList.Where(c => c.Status == (int)AppointmentStatus.NoShow).Count(),
+                ApptData = inqueueAppt
             };
         }
 

@@ -134,7 +134,7 @@
         //delete medicine after click confirm delete in modal
         function DeleteMedicine() {
             $.ajax({
-                type: "POST",
+                type: "DELETE",
                 url: "/Medicine/DeleteMedicine",
                 data: { "Id": serviceId },
                 success: function (response) {

@@ -35,12 +35,8 @@ namespace FypProject.Controllers
             return base.Index();
         }
 
-        [HttpPost]
         public JsonResult GetQRCodeList()
         {
-            string start = null;
-            string length = null;
-            int pageSize = 0, skip = 0;
             try
             {
                 int recordsTotal = 0;
@@ -75,7 +71,6 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
         public IActionResult GenerateQRCode()
         {
                 MemoryStream memoryStream = new MemoryStream();
@@ -131,7 +126,6 @@ namespace FypProject.Controllers
             return image;         
         }
 
-        [HttpGet]
         public IActionResult DownloadSpecificQRCode(int Id)
         {
             MemoryStream memoryStream = new MemoryStream();
@@ -157,7 +151,6 @@ namespace FypProject.Controllers
             return null;                    
         }
 
-        [HttpGet]
         public IActionResult GenerateTest()
         {
             MemoryStream memoryStream = new MemoryStream();

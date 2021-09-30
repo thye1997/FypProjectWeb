@@ -48,9 +48,9 @@ namespace FypProject.Controllers
                 var service = apptService.GetServiceList();
                 var result = new AppointmentApiScheduleViewModel
                 {
-                    spHolidayList = spHoliday,
-                    serviceList = service,
-                    offDay = offDay
+                    SpHolidayList = spHoliday,
+                    ServiceList = service,
+                    OffDay = offDay
                 };
                 return Ok(result);
             }
@@ -66,8 +66,8 @@ namespace FypProject.Controllers
         {
             try
             {
-                Debug.WriteLine($"this is called: {viewModel.date} {viewModel.slot}");
-                var result = apptService.LoadSpecificTimeSlot(viewModel.date,viewModel.slot);
+                Debug.WriteLine($"this is called: {viewModel.Date} {viewModel.Slot}");
+                var result = apptService.LoadSpecificTimeSlot(viewModel.Date,viewModel.Slot);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -83,7 +83,7 @@ namespace FypProject.Controllers
             try
             {
                 var res = (GeneralResponse)null;
-                Debug.WriteLine($"appt details is called: {viewModel.date} {viewModel.apptId}");
+                Debug.WriteLine($"appt details is called: {viewModel.Date} {viewModel.ApptId}");
 
                 res = apptService.AppointmentAction(viewModel);
                 return Ok(res);
@@ -100,7 +100,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                Debug.WriteLine($"id {viewModel.accId} service id {viewModel.serviceId} date {viewModel.date}  startTime {viewModel.startTime}");
+                Debug.WriteLine($"id {viewModel.AccId} service id {viewModel.ServiceId} date {viewModel.Date}  startTime {viewModel.StartTime}");
                 var result = apptService.AddAppointmentPatient(viewModel);
                 return Ok(result);
             }

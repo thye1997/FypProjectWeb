@@ -122,7 +122,7 @@ $('.general-form').find('#ApptTimeSlot').change(function (e) {
 });
 function LoadUserList() {
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/User/GetUserList",
         dataType: "json",
         async: false,
@@ -140,7 +140,7 @@ function ApptDetails() {
     var tomorrow = new Date();
     tomorrow.setDate(new Date().getDate()+1);
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/Appointment/GetApptRequestConfigData",
         dataType: "json",
         async: false,
@@ -240,7 +240,7 @@ function InitAdditionalInfo(Id) {
 }
 function PopulateSpecificDateSlot(slot) {
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/Appointment/LoadSpecificTimeSlot",
         dataType: "json",
         data: { slot: slot, date: dateSelected },
@@ -568,7 +568,7 @@ function CheckInAppt(id) {
     if (id <= 0)
     {
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "/Appointment/CheckInAppt",
             data: { "Id": checkInId },
             success: function (response) {

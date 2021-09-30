@@ -32,7 +32,6 @@ namespace FypProject.Controllers
         {
             return base.Index();
         }
-        [HttpPost]
         public JsonResult AddSystemUser(SystemUser systemUser)
         {
             try
@@ -50,7 +49,6 @@ namespace FypProject.Controllers
             }
         }
 
-        [HttpPost]
         public JsonResult LoadData()
         {
             try
@@ -65,7 +63,6 @@ namespace FypProject.Controllers
             }
 
         }
-        [HttpPost]
         public JsonResult DeleteSystemUser(int Id)
         {
             try

@@ -31,7 +31,6 @@ namespace FypProject.Controllers.Prescription
             return base.Index();
         }
 
-        [HttpPost]
         public IActionResult AddMedicine(string medName, string medType)
         {            
                 try
@@ -53,7 +52,6 @@ namespace FypProject.Controllers.Prescription
                 }           
         }
 
-        [HttpPost]
         public JsonResult DeleteMedicine(int Id)
         {
             try
@@ -68,7 +66,6 @@ namespace FypProject.Controllers.Prescription
             }
         }
 
-        [HttpPost]
         public JsonResult LoadData()
         {
             try
@@ -83,7 +80,6 @@ namespace FypProject.Controllers.Prescription
             }
 
         }
-        [HttpPost]
         public JsonResult GetSpecificTypeMedicine(string Type)
         {
             try

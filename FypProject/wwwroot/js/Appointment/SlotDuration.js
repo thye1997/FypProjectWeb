@@ -6,16 +6,16 @@ $(document).ready(function () {
     var slotDurAlertMsg = $('#slot-duration-alert-message');
     $('#slotDurationSelect').attr('disabled', 'disabled');
     $.ajax({
-        type: "POST",
-        url: "/Appointment/SlotDuration",
+        type: "GET",
+        url: "/Appointment/GetCurrentSlotDuration",
         data: { "Id": 0 },
         success: function (response) {
             var res = response["res"];
-            var duration = response["duration"];
+            var duration = response.data;
 
-            console.log("res value =>" + res);
+            console.log("duration value =>" + duration);
             var message = response["msg"];
-            var duration = response["duration"];
+            //var duration = response["duration"];
             $('#slotDurationSelect option[value=' + duration + ']').attr('selected', 'selected');
         }
     });
@@ -44,7 +44,7 @@ $(document).ready(function () {
         EditBtnVisibility(sdEditBtn, sdCancelBtn, sdSaveBtn);
 
         $.ajax({
-            type: "POST",
+            type: "PUT",
             url: "/Appointment/SlotDuration",
             data: { "Id": val },
             success: function (response) {

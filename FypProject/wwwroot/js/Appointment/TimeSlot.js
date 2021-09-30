@@ -78,7 +78,7 @@ $('select[id=timeSlotStart]').on('change', function (e) {
     $('select[id=timeSlotEnd] option').not(":selected").remove();
     $('select[id=timeSlotEnd] option:selected').hide();
         $('select[id=timeSlotEnd]').append('<option value="' + "" + '">' + "Select Time" + '</option>');
-        populateEndOption(slotss.timeslots, pos); 
+        populateEndOption(slotss, pos); 
 });
 
 $('select[id=timeSlotEnd]').on('change', function (e) {
@@ -90,7 +90,7 @@ $('select[id=timeSlotEnd]').on('change', function (e) {
         $('select[id=timeSlotStart] option').not(":selected").remove();
         $('select[id=timeSlotStart] option:selected').hide();
         $('select[id=timeSlotStart]').append('<option value="' + "" + '">' + "Select Time" + '</option>');
-        populateStartOption(slotss.timeslots, pos);
+        populateStartOption(slotss, pos);
     }
 
 
@@ -99,17 +99,17 @@ $('select[id=timeSlotEnd]').on('change', function (e) {
 
 function loadTimeSlot(slot) {
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/Appointment/LoadSlotTime",
         data: { slot: slot },
         dataType: "json",
         async:false,
         success: function (response) {
             resetTimeSlot();
-            var res = response;
-            slotss = response;
-            populateStartOption(res.timeslots);
-            populateEndOption(res.timeslots);
+            var res = response.data.timeslots;
+            slotss = response.data.timeslots;
+            populateStartOption(res);
+            populateEndOption(res);
         }
     });
 }
@@ -124,8 +124,8 @@ function resetTimeSlot() {
 }
 
 function findValPos(text) {
-    for (i = 0; i < slotss.timeslots.length; i++) {
-        if (slotss.timeslots[i].slot == text)
+    for (i = 0; i < slotss.length; i++) {
+        if (slotss[i].slot == text)
             return i;
     }
 }
@@ -140,7 +140,7 @@ function AddTimeSlot() {
     var endTxt = $('#timeSlotEnd  option:selected').text();
 
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: "/Appointment/UpdateTimeSlot",
         data: { "Id": id, "Slot": val1, "Start": val2, "End": val3 },
         success: function (response) {
