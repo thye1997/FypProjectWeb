@@ -21,7 +21,7 @@ namespace FypProject.Controllers
     public class ServiceController : BasicController
     {
         private readonly IGenericRepository<Service> _serviceRepository;
-        private readonly IGenericRepository<ServiceType> serviceTypeRepository;
+        private readonly IGenericRepository<ServiceType> _serviceTypeRepository;
 
         protected override string pageName { get; set; } = SystemData.View.ServiceIndex;
 
@@ -30,7 +30,7 @@ namespace FypProject.Controllers
             )
         {
             _serviceRepository = serviceRepository;
-            this.serviceTypeRepository = serviceTypeRepository;
+            _serviceTypeRepository = serviceTypeRepository;
         }
         public IActionResult Index()
         {
@@ -44,8 +44,8 @@ namespace FypProject.Controllers
         {
                 try
                 {
-                    var exist = _serviceRepository.List().Where(c => c.serviceName == serviceName && c.isActive).FirstOrDefault();
-                    var serviceType = serviceTypeRepository.List().Where(c => c.Id == typeId).FirstOrDefault();
+                    var exist = _serviceRepository.Where(c => c.serviceName == serviceName && c.isActive).FirstOrDefault();
+                    var serviceType = _serviceTypeRepository.Where(c => c.Id == typeId).FirstOrDefault();
                 if (exist != null) throw new BusinessException("Duplicate service name found."); 
                     var service = new Service
                     {
@@ -67,8 +67,8 @@ namespace FypProject.Controllers
         {
             try
             {
-                var dataList = _serviceRepository.List().Where(c => c.isActive).ToList();
-                var serviceType = serviceTypeRepository.List().ToList();
+                var dataList = _serviceRepository.Where(c => c.isActive);
+                var serviceType = _serviceTypeRepository.ToQueryable().ToList();
                 foreach(var obj in dataList)
                 {
                     obj.serviceType = serviceType.Where(c => c.Id == obj.typeId).FirstOrDefault();
@@ -87,7 +87,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                var service = _serviceRepository.List().Where(c => c.Id == Id).FirstOrDefault();
+                var service = _serviceRepository.Where(c => c.Id == Id).FirstOrDefault();
                 service.isActive = false;
                 _serviceRepository.SaveChanges();
                 return SetMessage(SystemData.ResponseStatus.Success, "Service deleted successfully.");
@@ -99,15 +99,4 @@ namespace FypProject.Controllers
 
         }
     }
-
-   /* class ServiceCustomData
-    {
-        public int customId { set; get; }
-        public int Id { set; get; }
-        public string serviceType { set; get; }
-        public string serviceName { set; get; }
-        public string createdOn { set; get; }
-        public string createdBy { set; get; }
-
-    }*/
 }

@@ -7,34 +7,14 @@ using System.Linq;
 using FypProject.Base;
 using FypProject.Config;
 using FypProject.ViewModel;
-//using FypProject.Base;
 using Microsoft.AspNetCore.Mvc;
 
     public static class DatatableHelper
     {
 
-
-     public static JsonResult DataTableResult<T>(this Controller controller, IDictionary<string, string> dict, List<T> list) 
-          
-     {
-         var draw = dict[SystemData.DatatableRequest.draw];
-         var start = dict[SystemData.DatatableRequest.start];
-         var length = dict[SystemData.DatatableRequest.length];
-
-         var pageSize = length != null ? Convert.ToInt32(length) : 0;
-         var skip = start != null ? Convert.ToInt32(start) : 0;
-
-         Debug.WriteLine($"value of draw {draw} , start {start}, length {length}");
-
-         var recordsTotal = list.Count();
-         var data = list.Skip(skip).Take(pageSize).ToList();
-         return new JsonResult(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data});
-     }
-
-    //create function for using view model
-    public static JsonResult DataTableResult<VM,T>(this Controller controller, IDictionary<string, string> dict, List<VM> list, bool isViewModel = true)
-        where VM : ListViewModel<T>, new()
-        where T : class,  new()
+    //for normal model
+    public static JsonResult DataTableResult<T>(this Controller controller, IDictionary<string, string> dict, IQueryable<T> list, Func<T, object> orderBy = null)
+        where T: class, IBusinessEntity, new()
     {
         var draw = dict[SystemData.DatatableRequest.draw];
         var start = dict[SystemData.DatatableRequest.start];
@@ -43,14 +23,22 @@ using Microsoft.AspNetCore.Mvc;
         var pageSize = length != null ? Convert.ToInt32(length) : 0;
         var skip = start != null ? Convert.ToInt32(start) : 0;
 
-        Debug.WriteLine($"value of draw {draw} , start {start}, length {length}");
+        //Debug.WriteLine($"value of draw {draw} , start {start}, length {length}");
 
         var recordsTotal = list.Count();
-        var data = list.Skip(skip).Take(pageSize).ToList();
+            if(orderBy == null)
+        {
+            orderBy = c => c.Id;
+        }
+            var data = list.Skip(skip).Take(pageSize).ToList().OrderBy(orderBy).ToList();
+
         return new JsonResult(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
     }
-    public static JsonResult DataTableResult<T>(this Controller controller, IDictionary<string, string> dict, List<T> list, Action<List<object>> datas, bool hasCustomId = false) 
-        where T : IBusinessEntity, new()
+
+    //for  view model
+    public static JsonResult DataTableResult<VM, T>(this Controller controller, IDictionary<string, string> dict, IQueryable<VM> list, bool isViewModel = true, Func<VM, object> orderBy = null) // use orderBy in Enumerable before changing date type in db
+        where VM : ListViewModel<T>, new()
+        where T : class, new()
     {
         var draw = dict[SystemData.DatatableRequest.draw];
         var start = dict[SystemData.DatatableRequest.start];
@@ -58,31 +46,23 @@ using Microsoft.AspNetCore.Mvc;
 
         var pageSize = length != null ? Convert.ToInt32(length) : 0;
         var skip = start != null ? Convert.ToInt32(start) : 0;
-         List<object> data = null;
-        Debug.WriteLine($"value of draw {draw} , start {start}, length {length}");
-        data = new List<object>();
-        datas?.Invoke(data);
-        /*if (hasCustomId)
+
+        //Debug.WriteLine($"value of draw {draw} , start {start}, length {length}");
+        var data = (List <VM>)null;
+
+        if (orderBy == null)
         {
-            data = new List<object>();
-            var count = 0;
-            foreach (var obj in list)
-            {
-                data.Add(new
-                {   
-                    customId = count++,
-                    data = obj
-                });
-            }
+            data = list.Skip(skip).Take(pageSize).ToList();
         }
-        else{
-        }*/
-        //dataList(list);
-        //data = (List<object>)(object)list.Skip(skip).Take(pageSize).ToList();
+        else
+        {
+            data = list.Skip(skip).Take(pageSize).AsEnumerable().OrderBy(orderBy).ToList();
+
+        }
 
         var recordsTotal = list.Count();
-        //var data = list.Skip(skip).Take(pageSize).ToList();
-        return new JsonResult(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data});
+        return new JsonResult(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
     }
+
 }
 

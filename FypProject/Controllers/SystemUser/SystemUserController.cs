@@ -36,7 +36,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                var sysUser = _systemUserRepository.List().Where(c => c.userName == systemUser.userName).FirstOrDefault();
+                var sysUser = _systemUserRepository.Where(c => c.userName == systemUser.userName).FirstOrDefault();
                 if (sysUser != null) throw new BusinessException("Duplicate user name found");
                 systemUser.createdBy = User.Identity.Name;
                 systemUser.Password = BCrypt.Net.BCrypt.HashPassword(systemUser.Password);
@@ -53,7 +53,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                var dataList = _systemUserRepository.List().ToList();
+                var dataList = _systemUserRepository.ToQueryable();
                 return this.DataTableResult(dict, dataList);
                 //yea boi cleaner
             }
@@ -68,7 +68,7 @@ namespace FypProject.Controllers
             try
             {
                 if (Id <= 0) throw new BusinessException("Invalid user id");
-                var sysUser = _systemUserRepository.List().Where(c => c.Id == Id).FirstOrDefault();
+                var sysUser = _systemUserRepository.Where(c => c.Id == Id).FirstOrDefault();
                 _systemUserRepository.Delete(Id);
                 return SetMessage(SystemData.ResponseStatus.Success, "User deleted successfully.");
             }

@@ -46,7 +46,7 @@ namespace FypProject.Controllers
                     userName = model.UserName,
                     Password = model.Password
                 };
-                var user = sysUserRepository.List().Where(c => c.userName == model.UserName).FirstOrDefault();
+                var user = sysUserRepository.Where(c => c.userName == model.UserName).FirstOrDefault();
                 if (user != null)
                 {
                     if (BCrypt.Net.BCrypt.Verify(model.Password, user.Password))

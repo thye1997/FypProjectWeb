@@ -35,7 +35,7 @@ namespace FypProject.Controllers.Prescription
         {            
                 try
                 {
-                    var exist = _medicineRepository.List().Where(c => c.medName == medName && c.isActive).FirstOrDefault();
+                    var exist = _medicineRepository.Where(c => c.medName == medName && c.isActive).FirstOrDefault();
                 if (exist != null) throw new BusinessException("Duplicate medicine name found.");
                     var medicine = new Medicine
                     {
@@ -56,7 +56,7 @@ namespace FypProject.Controllers.Prescription
         {
             try
             {
-                var medicine = _medicineRepository.List().Where(c => c.Id == Id).FirstOrDefault();
+                var medicine = _medicineRepository.Where(c => c.Id == Id).FirstOrDefault();
                 medicine.isActive = false;
                 _medicineRepository.SaveChanges();
                 return SetMessage(SystemData.ResponseStatus.Success, "Medicine deleted successfully.");
@@ -71,7 +71,7 @@ namespace FypProject.Controllers.Prescription
             try
             {              
                 // getting all Customer data  
-                var dataList = _medicineRepository.List().Where(c => c.isActive).ToList();
+                var dataList = _medicineRepository.Where(c => c.isActive).AsQueryable();
                 return this.DataTableResult(dict, dataList);
             }
             catch (Exception e)
@@ -84,7 +84,7 @@ namespace FypProject.Controllers.Prescription
         {
             try
             {
-                var result = _medicineRepository.List().Where(c => c.Type == Type && c.isActive)
+                var result = _medicineRepository.Where(c => c.Type == Type && c.isActive)
                         .Select(med => new MedicineListViewModel
                         {
                             Id = med.Id,

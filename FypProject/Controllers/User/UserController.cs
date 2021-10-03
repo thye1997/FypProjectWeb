@@ -19,16 +19,16 @@ namespace FypProject.Controllers
     public class UserController : BasicController
     {
         private IUserRepository _userRepository;
-        private readonly UserService userService;
-        private readonly MedicalHistoryService medicalHistoryService;
+        private readonly UserService _userService;
+        private readonly MedicalHistoryService _medicalHistoryService;
         protected override string pageName { get; set; } = SystemData.View.UserIndex;
 
         public UserController(IUserRepository userRepository,  UserService userService,
             MedicalHistoryService medicalHistoryService)
         {
-            this.userService = userService;
+            _userService = userService;
             _userRepository = userRepository;
-            this.medicalHistoryService = medicalHistoryService;
+            _medicalHistoryService = medicalHistoryService;
         }
         public IActionResult Index()
         {
@@ -47,7 +47,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                userService.AddPatient(user);
+                _userService.AddPatient(user);
                 return SetMessage(SystemData.ResponseStatus.Success, "Profile added successfully.");
             }
             catch (Exception ex)
@@ -60,7 +60,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                userService.AddMedicalHistory(obj);
+                _userService.AddMedicalHistory(obj);
                 return SetMessage(SystemData.ResponseStatus.Success, "Medical history added successfully.");
             }
             catch (Exception ex)
@@ -73,7 +73,7 @@ namespace FypProject.Controllers
         {
             try
             {
-             var result =  userService.UpdateUserDetail(user);
+             var result =  _userService.UpdateUserDetail(user);
                 return SetMessage(SystemData.ResponseStatus.Success, "Patient details updated successfully.");
             }
             catch(Exception ex)
@@ -84,16 +84,15 @@ namespace FypProject.Controllers
         //done
         public IActionResult UserDetail(int id)
         {
-            return View(userService.UserDetail(id));
+            return View(_userService.UserDetail(id));
         }
 
         public JsonResult GetMedHistory(int Id)
         {
             try
             {
-                var dataList = medicalHistoryService.RetrieveMedicalHistoryList(Id);
-                return this.DataTableResult(dict, dataList);
-
+                var dataList = _medicalHistoryService.RetrieveMedicalHistoryListById(Id).AsQueryable();
+                return this.DataTableResult<MedicalHistoryListViewModel,MedicalHistory>(dict, dataList, orderBy:c=> DateTime.Parse(c.Date));
             }
             catch (Exception e)
             {
@@ -109,13 +108,13 @@ namespace FypProject.Controllers
                 var searchValue = Request.Form["search[value]"].FirstOrDefault().ToLower();
                 Debug.Write($"{searchValue}");
 
-                var dataList = (List<User>)null;
+                var dataList = (IQueryable<User>)null;
                 if (!string.IsNullOrEmpty(searchValue))
                 {
-                     dataList = (List<User>)_userRepository.GetUserListBySearch(searchValue);
+                     dataList = _userRepository.GetUserListBySearch(searchValue).AsQueryable();
                 }
                 else {
-                    dataList = _userRepository.List().ToList();
+                    dataList = _userRepository.ToQueryable();
                 }
 
                 return this.DataTableResult(dict, dataList);
@@ -133,7 +132,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                var result = userService.GetUserList();
+                var result = _userService.GetUserList();
                 return SetMessage(SystemData.ResponseStatus.Success, data: new { userList = result });
             }
             catch(Exception ex)

@@ -27,7 +27,7 @@ namespace FypProject.Controllers
             }
             try
             {
-                var result = dashboardService.RetrievePatientDataCount(accId);
+                var result = dashboardService.RetrievePatientMobileDashboardData(accId);
                 return Ok(result);
             }catch(Exception ex)
             {

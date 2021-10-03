@@ -18,7 +18,7 @@ namespace FypProject.Base
         where T: class, new()
         where VM:  ListViewModel<T>, new()
     {
-        protected abstract string pageName { set; get; }
+       /* protected abstract string pageName { set; get; }
 
         protected  IActionResult Index()
         {
@@ -50,7 +50,7 @@ namespace FypProject.Base
             var dbContext = (AppDbContext)services.GetService(typeof(AppDbContext));
             IGenericRepository<DB> store = new GenericRepository<DB>(dbContext);
             return store;
-        }*/
+        }
         private JsonResult SetError(Exception ex)
         {
             return ex is BusinessException? Json(new { res = SystemData.ResponseStatus.Exist, msg = ex.Message })
@@ -67,6 +67,6 @@ namespace FypProject.Base
                 return Json(new { res = res, msg = msg });
             }
             return SetError(ex); // for response that contain error
-        }
+        }*/
     }
 }

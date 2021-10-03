@@ -40,9 +40,9 @@ namespace FypProject.Utils
                 },
             };
         }
-        public async Task SendNotifcation(IGenericRepository<Account> genericRepository, Notification obj)
+        public async Task SendNotifcationAsync(IGenericRepository<Account> genericRepository, Notification obj)
         {
-            var tokenList = genericRepository.List().Where(c => c.PushNotificationEnabled).ToList();
+            var tokenList = genericRepository.Where(c => c.PushNotificationEnabled).ToList();
             foreach(var n in tokenList)
             {
                 if (!string.IsNullOrEmpty(n.FirebaseToken))
@@ -56,7 +56,7 @@ namespace FypProject.Utils
                         using (var scoped = serviceProvider.CreateScope())
                         {    
                             var accountRepository = scoped.ServiceProvider.GetRequiredService<IGenericRepository<Account>>();
-                            var account= accountRepository.List().Where(c => c.Id == n.Id).FirstOrDefault();
+                            var account= accountRepository.Where(c => c.Id == n.Id).FirstOrDefault();
                             account.FirebaseToken = "";
                             accountRepository.SaveChanges();
                         };
@@ -77,7 +77,7 @@ namespace FypProject.Utils
             };
         }
 
-        public async Task SendRescheduleNotification(Account viewModel,string content)
+        public async Task SendRescheduleNotificationAsync(Account viewModel,string content)
         {            
                 if (!string.IsNullOrEmpty(viewModel.FirebaseToken))
                 {
@@ -90,7 +90,7 @@ namespace FypProject.Utils
                         using (var scoped = serviceProvider.CreateScope())
                         {
                             var accountRepository = scoped.ServiceProvider.GetRequiredService<IGenericRepository<Account>>();
-                            var account = accountRepository.List().Where(c => c.Id == viewModel.Id).FirstOrDefault();
+                            var account = accountRepository.Where(c => c.Id == viewModel.Id).FirstOrDefault();
                             account.FirebaseToken = "";
                             accountRepository.SaveChanges();
                         };
@@ -121,7 +121,7 @@ namespace FypProject.Utils
                 },
             };
         }
-        public async Task SendPushReminder(List<ReminderPushNotificationViewModel> viewModel)
+        public async Task SendPushReminderAsync(List<ReminderPushNotificationViewModel> viewModel)
         {
             foreach(var n in viewModel)
             {
@@ -135,7 +135,7 @@ namespace FypProject.Utils
                     using (var scoped = serviceProvider.CreateScope())
                     {
                         var accountRepository = scoped.ServiceProvider.GetRequiredService<IGenericRepository<Account>>();
-                        var account = accountRepository.List().Where(c => c.Id == n.Id).FirstOrDefault();
+                        var account = accountRepository.Where(c => c.Id == n.Id).FirstOrDefault();
                         account.FirebaseToken = "";
                         accountRepository.SaveChanges();
                     };

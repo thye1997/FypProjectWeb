@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>97100888-e5ea-4000-841e-92237070c337</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>ViewModel</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ApiViewModel\AccountApiViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ApiViewModel\AppointmentApiViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ApiViewModel\DashBoardApiViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ApiViewModel\NotificationApiViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\AppointmentScheduleViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\AppointmentViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\DashboardViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\ListViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\MedicalHistoryViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\MedicineViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\NotificationViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\QRCodeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\ServiceViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\SystemUserViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModel\UserViewModel.cs" />
+  </ItemGroup>
+</Project>

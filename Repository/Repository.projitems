@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>1a5a0f50-fca3-4ad8-8fbb-580bb25882b3</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Repository</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Repository\Appointment\AppointmentRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Repository\Appointment\IAppointmentRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Repository\GenericRepository\GenericRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Repository\GenericRepository\IGenericRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Repository\User\IUserRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Repository\User\UserRepository.cs" />
+  </ItemGroup>
+</Project>

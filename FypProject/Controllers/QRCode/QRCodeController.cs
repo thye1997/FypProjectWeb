@@ -22,11 +22,11 @@ namespace FypProject.Controllers
     [Authorize(AuthenticationSchemes = authenticationSchemes)]
     public class QRCodeController : BasicController
     {
-        private readonly IGenericRepository<FypProject.Models.QRCode> qrCodeRepository;
+        private readonly IGenericRepository<Models.QRCode> _qrCodeRepository;
 
-        public QRCodeController(IGenericRepository<FypProject.Models.QRCode> qrCodeRepository)
+        public QRCodeController(IGenericRepository<Models.QRCode> qrCodeRepository)
         {
-            this.qrCodeRepository = qrCodeRepository;
+            _qrCodeRepository = qrCodeRepository;
         }
         protected override string pageName { get; set; } = SystemData.View.QRCodeIndex;
 
@@ -39,29 +39,8 @@ namespace FypProject.Controllers
         {
             try
             {
-                int recordsTotal = 0;
-                // getting all Customer data  
-                var dataList = qrCodeRepository.List().ToList();
+                var dataList = _qrCodeRepository.ToQueryable();
                 return this.DataTableResult(dict, dataList);
-               /* var formattedResult = new List<QRCodeViewModel>();
-                var count = 1;
-                foreach(var n in result)
-                {
-                    formattedResult.Add(new QRCodeViewModel
-                    {
-                        Id = n.Id,
-                        FileName = n.FileName,
-                        createdBy = n.createdBy,
-                        isActive = n.isActive,
-                        createdOn = n.createdOn
-                    });                 
-                    count++;
-                }
-                recordsTotal = formattedResult.Count;
-                base.dataLoad(ref start, ref length, ref pageSize, ref skip);
-                //Returning Json Data  
-                var data = formattedResult.Skip(skip).Take(pageSize).ToList();
-                return Json(new { recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });*/
             }
             catch (Exception e)
             {
@@ -79,17 +58,17 @@ namespace FypProject.Controllers
                 var isExist = true;
                 while (isExist)
                 {
-                if (qrCodeRepository.List().Where(c => c.UniqueString == randomString).Any() == true)
+                if (_qrCodeRepository.Where(c => c.UniqueString == randomString).Any() == true)
                 {
                     isExist = true;
                     randomString = RandomHelper.RandomUniqueString(); }
                 else isExist = false;
                 }
-                var existQR = qrCodeRepository.List().Where(c => c.isActive == true).FirstOrDefault();
+                var existQR = _qrCodeRepository.Where(c => c.isActive == true).FirstOrDefault();
                 if (existQR != null)
                 {
                     existQR.isActive = false;
-                    qrCodeRepository.SaveChanges();
+                    _qrCodeRepository.SaveChanges();
                 }
                 var qrCode = new Models.QRCode
                 {
@@ -98,11 +77,14 @@ namespace FypProject.Controllers
                     isActive = true,
                     FileName = fileName
                 };
-                qrCodeRepository.Add(qrCode);
+                _qrCodeRepository.Add(qrCode);
                 var qrCodeImage = CreateQRCode(randomString);
                 Document doc = new Document(PageSize.A4);
+            try
+            {
                 using (var pdfWriter = PdfWriter.GetInstance(doc, memoryStream))
                 {
+                
                     pdfWriter.CloseStream = false;
                     doc.Open();
                     iTextSharp.text.Image pdfImage = iTextSharp.text.Image.GetInstance(qrCodeImage, System.Drawing.Imaging.ImageFormat.Jpeg);
@@ -112,8 +94,15 @@ namespace FypProject.Controllers
                     memoryStream.Write(byteInfo, 0, byteInfo.Length);
                     memoryStream.Position = 0;
                     return File(memoryStream, "application/pdf", fileName);
-                   //return ; //Return as file result
-                }
+                    //return ; //Return as file result
+               
+            }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                return File(memoryStream, "application/pdf", fileName);
+            }
         }
 
         private System.Drawing.Image CreateQRCode(string randomString)
@@ -128,44 +117,43 @@ namespace FypProject.Controllers
 
         public IActionResult DownloadSpecificQRCode(int Id)
         {
-            MemoryStream memoryStream = new MemoryStream();
       
-            var qrCode = qrCodeRepository.List().Where(c => c.Id == Id && c.isActive).FirstOrDefault();
+            var qrCode = _qrCodeRepository.Where(c => c.Id == Id && c.isActive).FirstOrDefault();
             if(qrCode != null)
             {
-                var qrCodeImage = CreateQRCode(qrCode.UniqueString);
                 Document doc = new Document(PageSize.A4);
-                using (var pdfWriter = PdfWriter.GetInstance(doc, memoryStream))
-                {
-                    pdfWriter.CloseStream = false;
-                    doc.Open();
-                    iTextSharp.text.Image pdfImage = iTextSharp.text.Image.GetInstance(qrCodeImage, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    doc.Add(pdfImage);
-                    doc.Close();
-                    byte[] byteInfo = memoryStream.ToArray();
-                    memoryStream.Write(byteInfo, 0, byteInfo.Length);
-                    memoryStream.Position = 0;
-                    return File(memoryStream, "application/pdf", qrCode.FileName); //Return as file result
-                }
+                var memoryStream = new MemoryStream();
+                var qrCodeImage = CreateQRCode(qrCode.UniqueString);
+                    using(var pdfWriter = PdfWriter.GetInstance(doc, memoryStream))
+                    {
+                        doc.Open();
+                        iTextSharp.text.Image pdfImage = iTextSharp.text.Image.GetInstance(qrCodeImage, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        doc.Add(pdfImage);
+                        pdfWriter.CloseStream = false;
+                        doc.Close();
+                        byte[] byteInfo = memoryStream.ToArray();
+                        memoryStream.Write(byteInfo, 0, byteInfo.Length);
+                        memoryStream.Position = 0;
+                        return File(memoryStream, "application/pdf", qrCode.FileName); //Return as file result
+                    }                    
             }
             return null;                    
         }
 
         public IActionResult GenerateTest()
         {
-            MemoryStream memoryStream = new MemoryStream();
-
-            var qrCode = qrCodeRepository.List().Where(c => c.isActive).FirstOrDefault();
+            var qrCode = _qrCodeRepository.Where(c => c.isActive).FirstOrDefault();
             if (qrCode != null)
             {
                 var qrCodeImage = CreateQRCode(qrCode.UniqueString);
-                Document doc = new Document(PageSize.A4);
-                using (var pdfWriter = PdfWriter.GetInstance(doc, memoryStream))
+                using (var memoryStream = new MemoryStream())
                 {
-                    pdfWriter.CloseStream = false;
+                    Document doc = new Document(PageSize.A4);
+                    var pdfWriter = PdfWriter.GetInstance(doc, memoryStream);
                     doc.Open();
                     iTextSharp.text.Image pdfImage = iTextSharp.text.Image.GetInstance(qrCodeImage, System.Drawing.Imaging.ImageFormat.Jpeg);
                     doc.Add(pdfImage);
+                    pdfWriter.CloseStream = false;
                     doc.Close();
                     byte[] byteInfo = memoryStream.ToArray();
                     memoryStream.Write(byteInfo, 0, byteInfo.Length);

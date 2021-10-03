@@ -19,27 +19,27 @@ namespace FypProject.Utils
 {
     public class TwilioHelper
     {
-        private readonly IConfiguration configuration;
-        private readonly IServiceProvider serviceProvider;
-        private readonly IHttpClientFactory clientFactory;
+        private readonly IConfiguration _configuration;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IHttpClientFactory _clientFactory;
 
         public TwilioHelper(IConfiguration configuration, IServiceProvider serviceProvider, IHttpClientFactory clientFactory)
         {
-            this.configuration = configuration;
-            this.serviceProvider = serviceProvider;
-            this.clientFactory = clientFactory;
+            this._configuration = configuration;
+            this._serviceProvider = serviceProvider;
+            this._clientFactory = clientFactory;
         }
 
-        public async Task SendSMS(Appointment appt)
+        public async Task SendSMSAsync(Appointment appt)
         {
-            string TwilioSID = configuration["Twilio:SID"];
-            string TwilioAuth = configuration["Twilio:AUTH"];
-            string TwilioPhoneNumberFrom = configuration["Twilio:PhoneNumberFrom"];
+            string TwilioSID = _configuration["Twilio:SID"];
+            string TwilioAuth = _configuration["Twilio:AUTH"];
+            string TwilioPhoneNumberFrom = _configuration["Twilio:PhoneNumberFrom"];
             string startTime = DateTime.Parse(appt.StartTime).ToUniversalTime().ToString("THHmmssZ");
             string formattedStartTime = DateTime.Parse(appt.Date).ToString("yyyyMMdd") + startTime;
             string formattedEndTime = DateTime.Parse(appt.Date).ToString("yyyyMMdd") + DateTime.Parse(appt.EndTime).ToUniversalTime().ToString("THHmmssZ");
             string calenderUrl = $"https://www.google.com/calendar/render?action=TEMPLATE&text=Your+Event+Name&dates={formattedStartTime}/{formattedEndTime}&details=&location=klinik+crosmed+%E9%A3%9E%E8%B7%83%E8%AF%8A%E6%89%80&sf=true&output=xml";
-            string tinyUrl = await TinyUrlRequest(calenderUrl, clientFactory);
+            string tinyUrl = await TinyUrlRequest(calenderUrl);
             /*TwilioClient.Init(TwilioSID, TwilioAuth);
 
             var message = await MessageResource.CreateAsync(
@@ -55,11 +55,11 @@ namespace FypProject.Utils
         }
 
 
-        private  async Task<string> TinyUrlRequest(string calender, IHttpClientFactory clientFactory)
+        private  async Task<string> TinyUrlRequest(string calender)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"http://tinyurl.com/api-create.php?url={calender}");
 
-            var client = clientFactory.CreateClient();
+            var client = _clientFactory.CreateClient();
             try
             {
                 var response = await client.SendAsync(request);
@@ -74,11 +74,11 @@ namespace FypProject.Utils
             
         }
 
-        public  async Task SendSMSReminder(List<ReminderSMSNotificationViewModel> viewModel)
+        public async Task SendSMSReminderAsync(List<ReminderSMSNotificationViewModel> viewModel)
         {
-            string TwilioSID = configuration["Twilio:SID"];
-            string TwilioAuth = configuration["Twilio:AUTH"];
-            string TwilioPhoneNumberFrom = configuration["Twilio:PhoneNumberFrom"];
+            string TwilioSID = _configuration["Twilio:SID"];
+            string TwilioAuth = _configuration["Twilio:AUTH"];
+            string TwilioPhoneNumberFrom = _configuration["Twilio:PhoneNumberFrom"];
             TwilioClient.Init(TwilioSID, TwilioAuth);
 
             foreach (var n in viewModel)
@@ -93,18 +93,18 @@ namespace FypProject.Utils
             }          
         }
 
-        public async Task SendSMSRescheduleReminder(Appointment viewModel)
+        public async Task SendSMSRescheduleReminderAsync(Appointment viewModel)
         {
 
             var user = (User)null;
-            using (var scoped = serviceProvider.CreateScope())
+            using (var scoped = _serviceProvider.CreateScope())
             {
                 var accountRepository = scoped.ServiceProvider.GetRequiredService<IGenericRepository<User>>();
-                 user = accountRepository.List().Where(c => c.Id == viewModel.userId).FirstOrDefault();
+                 user = accountRepository.Where(c => c.Id == viewModel.userId).FirstOrDefault();
             };
-            string TwilioSID = configuration["Twilio:SID"];
-            string TwilioAuth = configuration["Twilio:AUTH"];
-            string TwilioPhoneNumberFrom = configuration["Twilio:PhoneNumberFrom"];
+            string TwilioSID = _configuration["Twilio:SID"];
+            string TwilioAuth = _configuration["Twilio:AUTH"];
+            string TwilioPhoneNumberFrom = _configuration["Twilio:PhoneNumberFrom"];
             TwilioClient.Init(TwilioSID, TwilioAuth);
             
                 var message = await MessageResource.CreateAsync(

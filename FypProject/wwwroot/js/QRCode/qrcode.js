@@ -6,7 +6,7 @@ $(document).ready(function () {
 
 function DownloadQRCode(id) {
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/QRCode/DownloadSpecificQRCode",
         data: { "Id": id },
         success: function (response) {     
@@ -16,7 +16,7 @@ function DownloadQRCode(id) {
 }
 function GenerateQRCode() {
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/QRCode/GenerateQRCode",
         success: function (response) {
             alertMsg = $('#QRCode-list-alert-message');

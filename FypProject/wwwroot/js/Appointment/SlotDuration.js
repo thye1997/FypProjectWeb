@@ -45,7 +45,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: "PUT",
-            url: "/Appointment/SlotDuration",
+            url: "/Appointment/EditSlotDuration",
             data: { "Id": val },
             success: function (response) {
                 var res = response["res"];

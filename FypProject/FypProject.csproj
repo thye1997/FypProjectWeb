@@ -12,9 +12,13 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="Controllers\MedicalHistory\**" />
+	  <Compile Remove="Models\**" />
 	  <Content Remove="Controllers\MedicalHistory\**" />
+	  <Content Remove="Models\**" />
 	  <EmbeddedResource Remove="Controllers\MedicalHistory\**" />
+	  <EmbeddedResource Remove="Models\**" />
 	  <None Remove="Controllers\MedicalHistory\**" />
+	  <None Remove="Models\**" />
 	</ItemGroup>
 
 
@@ -42,5 +46,11 @@
   <ItemGroup>
     <None Include="wwwroot\js\User\User.js" />
   </ItemGroup>
+
+  <Import Project="..\DBModel\DBModel.projitems" Label="Shared" />
+
+  <Import Project="..\Repository\Repository.projitems" Label="Shared" />
+
+  <Import Project="..\ViewModel\ViewModel.projitems" Label="Shared" />
 
 </Project>

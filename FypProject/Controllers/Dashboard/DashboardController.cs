@@ -23,7 +23,7 @@ namespace FypProject.Controllers
 
         public IActionResult Index()
         {
-            return View(dashboardService.RetrieveWebApptDataCount());                         
+            return View(dashboardService.RetrieveWebApptDashboardDataCount());                         
         }
     }
 }

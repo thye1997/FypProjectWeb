@@ -17,7 +17,7 @@ namespace FypProject.Utils
         public string StartTime { set; get; }
         public int SlotKey { set; get; }
 
-        public static List<TimeSlotHelper> returnSlot(string slot)
+        public static List<TimeSlotHelper> ReturnSlot(string slot)
         {
             string startTime;
             string endTime;
@@ -47,10 +47,10 @@ namespace FypProject.Utils
                 {
                     end = end.AddDays(1);
                 }
-                TimeSpan duration = end.Subtract(starts);
-                int dur = CalcStartEndDiff(startTime,endTime);
-                Debug.WriteLine("duration calculated=>" + dur);
-                for(int i = start; i <=start+dur; i++)
+                //TimeSpan duration = end.Subtract(starts);
+                int duration = CalcStartEndDiff(startTime,endTime);
+                //Debug.WriteLine("duration calculated=>" + dur);
+                for(int i = start; i <=start+duration; i++)
                 {
                 if (i >= 24)
                 {
@@ -84,9 +84,7 @@ namespace FypProject.Utils
             int slotDurationCount = 0;
          
             for (int i = start; i < start + differentHour; i++)
-            {
-                
-
+            {              
                 for (int j = 0; j < slotPerHour; j++)
                 {
                     if(j == 0)
@@ -120,7 +118,6 @@ namespace FypProject.Utils
                                 SlotKey = i
                             });
                         }
-
                     }
                     slotDurationCount = 0;
                 }

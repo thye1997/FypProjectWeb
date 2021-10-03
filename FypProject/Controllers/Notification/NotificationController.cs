@@ -18,16 +18,16 @@ namespace FypProject.Controllers
     [Authorize(AuthenticationSchemes = authenticationSchemes)]
     public class NotificationController : BasicController
     {
-        private readonly IGenericRepository<Notification> notiRepository;
-        private readonly IGenericRepository<Account> accRepository;
-        private readonly FirebaseNotificationHelper firebaseNotificationHelper;
+        private readonly IGenericRepository<Notification> _notificationRepository;
+        private readonly IGenericRepository<Account> _accRepository;
+        private readonly FirebaseNotificationHelper _firebaseNotificationHelper;
         public NotificationController(IGenericRepository<Notification> notiRepository, IGenericRepository<Account> accRepository,
             FirebaseNotificationHelper firebaseNotificationHelper
             )
         {
-            this.notiRepository = notiRepository;
-            this.accRepository = accRepository;
-            this.firebaseNotificationHelper = firebaseNotificationHelper;
+            _notificationRepository = notiRepository;
+            _accRepository = accRepository;
+            _firebaseNotificationHelper = firebaseNotificationHelper;
         }
         protected override string pageName { get; set; } = SystemData.View.NotificationIndex;
 
@@ -40,7 +40,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                var dataList = notiRepository.List().ToList();
+                var dataList = _notificationRepository.ToQueryable();
                 return this.DataTableResult(dict, dataList);
             }
             catch (Exception e)
@@ -55,9 +55,9 @@ namespace FypProject.Controllers
         {
             try
             {
-               await firebaseNotificationHelper.SendNotifcation(accRepository, obj);
+               await _firebaseNotificationHelper.SendNotifcationAsync(_accRepository, obj);
                 obj.createdBy = User.Identity.Name;
-                notiRepository.Add(obj);
+                _notificationRepository.Add(obj);
                 return SetMessage(SystemData.ResponseStatus.Success, "Notification sent successfully.");
             }
             catch (Exception ex)

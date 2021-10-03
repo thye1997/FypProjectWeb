@@ -19,6 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<UserService>();
             services.AddScoped<AccountService>();
             services.AddScoped<AppointmentService>();
+            services.AddScoped<AppointmentScheduleService>();
             services.AddScoped<NotificationService>();
             services.AddScoped<DashboardService>();
             services.AddScoped<MedicalHistoryService>();

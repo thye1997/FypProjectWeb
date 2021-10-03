@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>9ba3e04d-dd72-4940-b2a2-8603426606ac</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>DBModel</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BaseInterface\IBusinessEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Account\Account.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\AppDbContext\AppDbContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Appointment\Appointment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Dashboard\Dashboard.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ErrorViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Login.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\MedicalHistory\MedicalHistory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Medicine\Medicine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Notification\Notification.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\QRCode\QRCode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Reminder\Reminder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Service\Service.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Service\ServiceType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\SystemUser\SystemUser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\User\User.cs" />
+  </ItemGroup>
+</Project>

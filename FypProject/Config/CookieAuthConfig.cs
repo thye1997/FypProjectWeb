@@ -20,15 +20,13 @@ namespace Microsoft.Extensions.DependencyInjection
                     {
                         OnSigningIn = context =>
                         {
-                            //context.Properties.IsPersistent = true;
-                            Debug.WriteLine("hehe user signning in");                       
+                            Debug.WriteLine(" user signning in");                       
                             return Task.CompletedTask;
                         },
                         OnSignedIn = context =>
                         {
-                            //var header =
                             var header = context.Response.Headers.AsEnumerable();
-                           context.Response.Headers.Add("My-Custom-Response-Headers", "Yeet");
+                            context.Response.Headers.Add("My-Custom-Response-Headers", "Test");
                             foreach(var head in header)
                             {
                                 Debug.WriteLine($"header value of request => {head} {Environment.NewLine}");
@@ -37,13 +35,10 @@ namespace Microsoft.Extensions.DependencyInjection
                         },
                         OnSigningOut = context =>
                         {
-                            Debug.WriteLine("Yeet, user is signning out");
+                            Debug.WriteLine("user is signning out");
                             return Task.CompletedTask;
 
                         }
-
-
-
                     };
                     options.Cookie.Name = "FypProj";
                     options.LoginPath = "/Account/Login";

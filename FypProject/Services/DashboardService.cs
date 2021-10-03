@@ -12,21 +12,21 @@ namespace FypProject.Services
 {
     public class DashboardService
     {
-        private readonly IGenericRepository<AccountProfile> accProfileRepository;
-        private readonly IAppointmentRepository apptRepository;
+        private readonly IGenericRepository<AccountProfile> _accProfileRepository;
+        private readonly IAppointmentRepository _apptRepository;
         public DashboardService(
             IGenericRepository<AccountProfile> accProfileRepository,
             IAppointmentRepository apptRepository)
         {
-            this.accProfileRepository = accProfileRepository;
-            this.apptRepository = apptRepository;
+            _accProfileRepository = accProfileRepository;
+            _apptRepository = apptRepository;
         }
 
-        public DashBoardApiViewModel RetrievePatientDataCount(int accId)
+        public DashBoardApiViewModel RetrievePatientMobileDashboardData(int accId)
         {
             List<int> userId = new List<int>();
 
-            var userIdList = accProfileRepository.List().Where(c => c.accountId == accId).ToList();
+            var userIdList = _accProfileRepository.Where(c => c.accountId == accId).ToList();
             if (userIdList != null)
             {
                 foreach(var n in userIdList)
@@ -35,8 +35,8 @@ namespace FypProject.Services
                 }
             }
             int[] inqueueStatus = new int[ ]{ (int)AppointmentStatus.InQueue };
-            var apptList = apptRepository.List().Where(c => userId.Contains(c.userId)).ToList();
-            var result = apptRepository.GetAppointmentList(inqueueStatus).Where(c => userId.Contains(c.userId)).OrderBy(c => DateTime.Parse(c.Date)).FirstOrDefault();
+            var apptList = _apptRepository.Where(c => userId.Contains(c.userId)).ToList();
+            var result = _apptRepository.GetAppointmentList(inqueueStatus).AsEnumerable().Where(c => userId.Contains(c.userId)).OrderBy(c => DateTime.Parse(c.Date)).FirstOrDefault();
 
             var inqueueAppt = (AppointmentData)null;
             if(result != null)
@@ -63,10 +63,10 @@ namespace FypProject.Services
             };
         }
 
-        public DashboardViewModel RetrieveWebApptDataCount()
+        public DashboardViewModel RetrieveWebApptDashboardDataCount()
         {
             var model = (DashboardViewModel)null;
-            var apptList = apptRepository.List().ToList();
+            var apptList = _apptRepository.ToQueryable();
 
             List<int> passApptStatus = new List<int>() { (int)AppointmentStatus.Completed, (int)AppointmentStatus.Cancelled };
 

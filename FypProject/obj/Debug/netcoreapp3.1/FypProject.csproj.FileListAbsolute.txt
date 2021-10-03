@@ -986,7 +986,6 @@ C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\Fy
 C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
 C:\Users\chent\Documents\FypProgrammingFolder\FypProjectGithub1\FypProjectWeb\FypProject\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
-C:\Users\chent\Documents\programming folder\Refactor Fyp\FypProjectWeb\FypProject\obj\Debug\netcoreapp3.1\FypProject.csproj.AssemblyReference.cache
 C:\Users\chent\Documents\programming folder\Refactor Fyp\FypProjectWeb\FypProject\obj\Debug\netcoreapp3.1\FypProject.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\chent\Documents\programming folder\Refactor Fyp\FypProjectWeb\FypProject\obj\Debug\netcoreapp3.1\FypProject.AssemblyInfoInputs.cache
 C:\Users\chent\Documents\programming folder\Refactor Fyp\FypProjectWeb\FypProject\obj\Debug\netcoreapp3.1\FypProject.AssemblyInfo.cs
@@ -1186,3 +1185,4 @@ C:\Users\chent\Documents\programming folder\Refactor Fyp\FypProjectWeb\FypProjec
 C:\Users\chent\Documents\programming folder\Refactor Fyp\FypProjectWeb\FypProject\obj\Debug\netcoreapp3.1\FypProject.csproj.CopyComplete
 C:\Users\chent\Documents\programming folder\Refactor Fyp\FypProjectWeb\FypProject\obj\Debug\netcoreapp3.1\FypProject.genruntimeconfig.cache
 C:\Users\chent\Documents\programming folder\Refactor Fyp\FypProjectWeb\FypProject\bin\Debug\netcoreapp3.1\serviceKey.json
+C:\Users\chent\Documents\programming folder\Refactor Fyp\FypProjectWeb\FypProject\obj\Debug\netcoreapp3.1\FypProject.csproj.AssemblyReference.cache

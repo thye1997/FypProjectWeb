@@ -25,16 +25,19 @@ namespace FypProject.Controllers
         private string apptSchedulePageName { get; set; } = SystemData.View.AppointmentScheduleIndex;
 
         private readonly AppointmentService apptService;
+        private readonly AppointmentScheduleService _apptScheduleService;
         private readonly IGenericRepository<SystemUser> sysUserRepository;
         private readonly IConfiguration config;
         private readonly IHttpClientFactory clientFactory;
         public AppointmentController(AppointmentService apptService, IUserRepository userRepository,IConfiguration config, IHttpClientFactory clientFactory,
-            IGenericRepository<SystemUser> sysUserRepository)
+            IGenericRepository<SystemUser> sysUserRepository,
+            AppointmentScheduleService apptScheduleService)
         {
             this.apptService = apptService;
             this.config = config;
             this.clientFactory = clientFactory;
             this.sysUserRepository = sysUserRepository;
+            _apptScheduleService = apptScheduleService;
         }
         public IActionResult Index()
         {
@@ -42,7 +45,7 @@ namespace FypProject.Controllers
         }
 
         public IActionResult AppointmentSchedule()
-        { var apptSchedule = apptService.RetrieveApptSchedule();
+        { var apptSchedule = _apptScheduleService.RetrieveApptSchedule();
             
             return View(apptSchedulePageName, apptSchedule);
         }
@@ -50,7 +53,7 @@ namespace FypProject.Controllers
        // [HttpPut]
         public IActionResult UpdateOffDay(int[] isChecked)
         {          
-            var updatedOffDaySchedule =  apptService.UpdateOffDaySchedule(isChecked);
+            var updatedOffDaySchedule = _apptScheduleService.UpdateOffDaySchedule(isChecked);
             return PartialView(SystemData.ViewPagePath.WorkDayTableView, updatedOffDaySchedule);
         }
 
@@ -59,8 +62,8 @@ namespace FypProject.Controllers
         {
             try
             {
-                var dataList = apptService.GetSpecialHoliday();
-                return this.DataTableResult(dict, dataList.spHolidayList);
+                var dataList = _apptScheduleService.GetSpecialHoliday();
+                return this.DataTableResult(dict, dataList.spHolidayList.AsQueryable());
             }
             catch (Exception e)
             {
@@ -78,9 +81,9 @@ namespace FypProject.Controllers
                 var dataList = apptService.GetAppointmentList(apptStatus,searchValue);
                 if(today == 1) //done for today
                 {
-                    dataList = apptService.GetAppointmentList(apptStatus, searchValue).Where(c => DateTime.Parse(c.Date) == DateTime.Today).ToList();
+                    dataList = apptService.GetAppointmentList(apptStatus, searchValue).Where(c => DateTime.Parse(c.Date) == DateTime.Today);
                 }
-                return this.DataTableResult<AppointmentViewModel,Appointment>(dict, dataList);
+                return this.DataTableResult<AppointmentViewModel,Appointment>(dict, dataList, orderBy: c=>  DateTime.Parse(c.Date));
             }
             catch (Exception e)
             {
@@ -112,7 +115,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                apptService.AddSpecialHoliday(obj);
+                _apptScheduleService.AddSpecialHoliday(obj);
                 return SetMessage(SystemData.ResponseStatus.Success, "Special Holiday added successfully.");
             }
             catch (Exception ex)
@@ -127,8 +130,8 @@ namespace FypProject.Controllers
         {
             try
             {
-               var result= apptService.GetSpecialHolidayList();
-                var offDay = apptService.RetrieveOffDaySchedule();
+               var result= _apptScheduleService.GetSpecialHolidayList();
+                var offDay = _apptScheduleService.RetrieveOffDaySchedule();
                 var service = apptService.GetServiceList();
                 return SetMessage(SystemData.ResponseStatus.Success, data: new { spHoliday = result, offDay = offDay, service = service });
            }
@@ -144,7 +147,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                var result = apptService.LoadTimeSlot(slot);
+                var result = _apptScheduleService.LoadTimeSlot(slot);
                 return SetMessage(data: new { timeslots = result });
             }
             catch(Exception ex)
@@ -158,7 +161,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                apptService.UpdateTimeSlot(obj);
+                _apptScheduleService.UpdateTimeSlot(obj);
                 return SetMessage(SystemData.ResponseStatus.Success, "Time Slot Updated successfully.");
             }
             catch(Exception ex)
@@ -172,7 +175,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                var result = apptService.LoadSpecificTimeSlot(date, slot);
+                var result = _apptScheduleService.LoadSpecificTimeSlot(date, slot);
                 return Json(new { timeslots = result });
             }
             catch(Exception ex)
@@ -186,7 +189,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                var result = apptService.GetSlotDuration();
+                var result = _apptScheduleService.GetSlotDuration();
                 return SetMessage(data: result);
             }
             catch (Exception ex)
@@ -200,7 +203,7 @@ namespace FypProject.Controllers
         {
             try
             {
-               var result= apptService.EditSlotDuration(Id);
+               var result= _apptScheduleService.EditSlotDuration(Id);
                 return SetMessage(SystemData.ResponseStatus.Success, "Slot duration updated successfully.");
             }
             catch (Exception ex)
@@ -256,7 +259,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                appt.doctorId = sysUserRepository.List().Where(c => c.userName == User.Identity.Name).FirstOrDefault().Id;
+                appt.doctorId = sysUserRepository.Where(c => c.userName == User.Identity.Name).FirstOrDefault().Id;
                 var result = apptService.UpdateAppointmentDetail(appt);
                 return SetMessage(SystemData.ResponseStatus.Success, "Appointment Updated successfully.", data: new { obj = result });
             }

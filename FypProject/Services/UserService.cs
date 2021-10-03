@@ -47,7 +47,7 @@ namespace FypProject.Services
         }
         public List<User> GetUserList()
         {
-            return _userRepository.List().ToList();
+            return _userRepository.ToQueryable().ToList();
         }
 
         public User UpdateUserDetail(User obj)
