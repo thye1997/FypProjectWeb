@@ -150,7 +150,7 @@ function NextOngoingAppointment(id) {
             success: function (response) {
                 var msg = response['msg'];
                 var res = response['res'];
-                var apptStatus = response['apptStatus'];
+                var apptStatus = response.data.apptStatus;
                 $('#apptStatus').val(apptStatus);
                 alertMessageFunc(res, msg, apptAlertMsg);
                 $('#dropdownMenuButton').addClass("hide-btn");

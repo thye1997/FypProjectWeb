@@ -39,7 +39,8 @@ namespace FypProject
             services.DependencyInjection(serviceMessage);
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("FypProject")));
-            //services.AddIdentity<SystemUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();            
+            //services.AddIdentity<SystemUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+            //services.AddScoped<CustomAuthFilter>();
             services.CookiesAuthConfig();
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -64,17 +65,17 @@ namespace FypProject
             //var list = new List<string> { "/css", "/js", "/lib", "/favicon.ico" };
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            /*app.UseWhen( //just testing tho
+
+            /*app.UseWhen( //just testing 
                 context => list.Any(s => context.Request.Path.StartsWithSegments(s)),
                 appbuilder =>
                 appbuilder.UseStaticFiles()
                 );*/
 
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-           
+            app.UseRequestCookieValidate();
 
             app.UseEndpoints(endpoints =>
             {

@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FypProject.Config;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -24,13 +26,14 @@ namespace Microsoft.Extensions.DependencyInjection
                             return Task.CompletedTask;
                         },
                         OnSignedIn = context =>
-                        {
-                            var header = context.Response.Headers.AsEnumerable();
+                        {                           
+                            /*var header = context.Response.Headers.AsEnumerable();
                             context.Response.Headers.Add("My-Custom-Response-Headers", "Test");
-                            foreach(var head in header)
+
+                            foreach (var head in header)
                             {
                                 Debug.WriteLine($"header value of request => {head} {Environment.NewLine}");
-                            }
+                            }*/
                             return Task.CompletedTask;
                         },
                         OnSigningOut = context =>
@@ -40,7 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
                         }
                     };
-                    options.Cookie.Name = "FypProj";
+                    options.Cookie.Name = SystemData.Cookie.FypProj;
                     options.LoginPath = "/Account/Login";
                     //options.ExpireTimeSpan = new TimeSpan(0,0,5);
                 });

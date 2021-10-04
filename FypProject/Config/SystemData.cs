@@ -8,6 +8,10 @@ namespace FypProject.Config
 {
     public static class SystemData
     {
+        public static class Cookie
+        {
+            public const string FypProj = "FypProj";
+        }
         public static class PageTitle
         {
             public const string Dashboard = "Dashboard";
