@@ -79,10 +79,7 @@ namespace FypProject.ApiViewModel
     }
 
 
-    public class GeneralResponse{
-        public bool isSuccess { set; get; } 
-        public string message { set; get; }
-    }
+    
 
     public class UpdateFirebaseTokenRequest
     {

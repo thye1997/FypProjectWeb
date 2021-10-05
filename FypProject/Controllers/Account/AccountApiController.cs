@@ -140,7 +140,7 @@ namespace FypProject.Controllers
             Debug.WriteLine("Notification prefs settings called");
             try
             {
-                var result = accountService.NotifcationPrefsSettings(accId);
+                var result = accountService.GetNotifcationPrefsSettings(accId);
                 return Ok(result);
 
             }catch(Exception ex)
@@ -234,9 +234,8 @@ namespace FypProject.Controllers
         {
             try
             {
-                var result = (DefaultProfileData)null;
                 Debug.WriteLine("Get default profile data is called");
-                 result  = viewModel.ProfileId>0? accountService.UpdateDefaultProfileData(viewModel): accountService.GetDefaultProfileData(viewModel);
+               var result  = viewModel.ProfileId>0? accountService.UpdateDefaultProfileData(viewModel): accountService.GetDefaultProfileData(viewModel);
                 return Ok(result);
             }
             catch(Exception ex)

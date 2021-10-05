@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Builder
         public async Task InvokeAsync(HttpContext context)
         {
             var contextUrl = context.Request.Path;
-            if (contextUrl.StartsWithSegments("/Account/Login")) // do not let user go back to login page if authenticated already
+            if (contextUrl.StartsWithSegments("/Account/Login")) 
             {
                     if (context.Request.Cookies.ContainsKey(SystemData.Cookie.FypProj))
                     {
