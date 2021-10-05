@@ -14,14 +14,14 @@ namespace FypProject.Services
 {
     public class NotificationService
     {
-        private readonly IGenericRepository<Notification> notificationRepository;
-        private readonly IAppointmentRepository appointmentRepository;
-        private readonly IGenericRepository<AccountProfile> accProfileRepository;
-        private readonly IGenericRepository<User> userRepository;
-        private readonly IGenericRepository<Account> accRepository;
-        private readonly FirebaseNotificationHelper firebase;
-        private readonly TwilioHelper twilio;
-        private readonly IGenericRepository<Reminder> reminderRepository;
+        private readonly IGenericRepository<Notification> _notificationRepository;
+        private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IGenericRepository<AccountProfile> _accProfileRepository;
+        private readonly IGenericRepository<User> _userRepository;
+        private readonly IGenericRepository<Account> _accRepository;
+        private readonly FirebaseNotificationHelper _firebaseHelper;
+        private readonly TwilioHelper _twilioHelper;
+        private readonly IGenericRepository<Reminder> _reminderRepository;
 
         public NotificationService(IGenericRepository<Notification> notificationRepository,
             IAppointmentRepository appointmentRepository,
@@ -33,19 +33,19 @@ namespace FypProject.Services
             IGenericRepository<Reminder> reminderRepository
             )
         {
-            this.notificationRepository = notificationRepository;
-            this.appointmentRepository = appointmentRepository;
-            this.accProfileRepository = accProfileRepository;
-            this.userRepository = userRepository;
-            this.accRepository = accRepository;
-            this.firebase = firebase;
-            this.twilio = twilio;
-            this.reminderRepository = reminderRepository;
+            _notificationRepository = notificationRepository;
+            _appointmentRepository = appointmentRepository;
+            _accProfileRepository = accProfileRepository;
+            _userRepository = userRepository;
+            _accRepository = accRepository;
+            _firebaseHelper = firebase;
+            _twilioHelper = twilio;
+            _reminderRepository = reminderRepository;
         }
         public List<NotificationListResponse> GetNotificationList()
         {
             List<NotificationListResponse> list = new List<NotificationListResponse>();
-            var result = notificationRepository.ToQueryable().ToList();
+            var result = _notificationRepository.ToQueryable().ToList();
             if (result != null)
             {
                 foreach(var n in result)
@@ -66,30 +66,24 @@ namespace FypProject.Services
         }
         public List<ReminderListViewModel> GetReminderList(int accId)
         {
-            var accProfile = accProfileRepository.Where(c => c.accountId == accId).ToList();
+            var accProfileId = _accProfileRepository.Where(c => c.accountId == accId).Select(c=>c.userId).ToList();
             List<ReminderListViewModel> reminderLists = new List<ReminderListViewModel>();
-            List<int> userIdList = new List<int>();
-            foreach(var n in accProfile)
+
+            if (accProfileId.Count > 0)
             {
-                userIdList.Add(n.userId);
+                reminderLists = _reminderRepository.Where(c => accProfileId.Contains(c.userId))
+                .Select(c=> new ReminderListViewModel 
+                { 
+                    content = c.Content
+                
+                }).ToList();      
             }
-            if (accProfile.Count > 0)
-            {
-                var reminderList = reminderRepository.Where(c => userIdList.Contains(c.userId)).ToList();
-                foreach(var n in reminderList)
-                {
-                    reminderLists.Add(new ReminderListViewModel
-                    {
-                        content = n.Content,
-                    });
-                }
-         
-            }
+
             return reminderLists;
         }
         public List<Appointment> ReminderList()
         {
-            var apptList = appointmentRepository.Where(c=>c.Status == (int)AppointmentStatus.Confirmed).ToList();
+            var apptList = _appointmentRepository.Where(c=>c.Status == (int)AppointmentStatus.Confirmed).ToList();
             List<Appointment> reminderList = new List<Appointment>();
             if (apptList.Count > 0)
             {
@@ -114,12 +108,12 @@ namespace FypProject.Services
             if (reminderList.Count>0)
             {  foreach(var n in reminderList)
                 {   
-                    var accountBindList = accProfileRepository.Where(c => c.userId == n.userId).ToList();
+                    var accountBindList = _accProfileRepository.Where(c => c.userId == n.userId).ToList();
                     if (accountBindList.Count >0)
                     {
                         foreach(var q in accountBindList)
                         {
-                            var accountList = accRepository.Where(c => c.Id == q.accountId).ToList();
+                            var accountList = _accRepository.Where(c => c.Id == q.accountId).ToList();
                             if (accountList.Count > 0)
                             {
                                 foreach (var a in accountList)
@@ -158,13 +152,13 @@ namespace FypProject.Services
             {
                 foreach (var n in reminderList)
                 {
-                    var accountBind = accProfileRepository.Where(c => c.userId == n.userId).FirstOrDefault();
+                    var accountBind = _accProfileRepository.Where(c => c.userId == n.userId).FirstOrDefault();
                     if (accountBind != null)
                     {
-                        var account = accRepository.Where(c => c.Id == accountBind.accountId).FirstOrDefault();
+                        var account = _accRepository.Where(c => c.Id == accountBind.accountId).FirstOrDefault();
                         if (account.AppointmentSMSReminderEnabled)
                         {
-                            var profile = userRepository.Where(c => c.Id == accountBind.userId).FirstOrDefault();
+                            var profile = _userRepository.Where(c => c.Id == accountBind.userId).FirstOrDefault();
                             if(profile.PhoneNumber != null)
                             {
                                 notificationReminder.Add(new ReminderSMSNotificationViewModel
@@ -190,12 +184,12 @@ namespace FypProject.Services
         public async Task SendPushNotificationReminder()
         {
             var list = PushNotificationReminderList();
-           await firebase.SendPushReminderAsync(list);
+           await _firebaseHelper.SendPushReminderAsync(list);
         }
         public async Task SendSMSReminder()
         {
             var list = SMSNotificationReminderList();
-             await twilio.SendSMSReminderAsync(list);
+             await _twilioHelper.SendSMSReminderAsync(list);
         }
     }
 }

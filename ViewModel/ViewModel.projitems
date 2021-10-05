@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ApiViewModel\AccountApiViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ApiViewModel\AppointmentApiViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ApiViewModel\DashBoardApiViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ApiViewModel\GeneralApiViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ApiViewModel\NotificationApiViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModel\AppointmentScheduleViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModel\AppointmentViewModel.cs" />

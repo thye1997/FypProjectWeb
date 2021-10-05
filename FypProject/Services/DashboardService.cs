@@ -24,19 +24,10 @@ namespace FypProject.Services
 
         public DashBoardApiViewModel RetrievePatientMobileDashboardData(int accId)
         {
-            List<int> userId = new List<int>();
-
-            var userIdList = _accProfileRepository.Where(c => c.accountId == accId).ToList();
-            if (userIdList != null)
-            {
-                foreach(var n in userIdList)
-                {
-                    userId.Add(n.userId);
-                }
-            }
+            var userIdList = _accProfileRepository.Where(c => c.accountId == accId).Select(c=>c.userId).ToList();
             int[] inqueueStatus = new int[ ]{ (int)AppointmentStatus.InQueue };
-            var apptList = _apptRepository.Where(c => userId.Contains(c.userId)).ToList();
-            var result = _apptRepository.GetAppointmentList(inqueueStatus).AsEnumerable().Where(c => userId.Contains(c.userId)).OrderBy(c => DateTime.Parse(c.Date)).FirstOrDefault();
+            var apptList = _apptRepository.Where(c => userIdList.Contains(c.userId)).ToList();
+            var result = _apptRepository.GetAppointmentList(inqueueStatus).AsEnumerable().Where(c => userIdList.Contains(c.userId)).OrderBy(c => DateTime.Parse(c.Date)).FirstOrDefault();
 
             var inqueueAppt = (AppointmentData)null;
             if(result != null)
@@ -65,12 +56,9 @@ namespace FypProject.Services
 
         public DashboardViewModel RetrieveWebApptDashboardDataCount()
         {
-            var model = (DashboardViewModel)null;
             var apptList = _apptRepository.ToQueryable();
-
             List<int> passApptStatus = new List<int>() { (int)AppointmentStatus.Completed, (int)AppointmentStatus.Cancelled };
-
-            model = new DashboardViewModel
+            var model = new DashboardViewModel
             {
                 totalUpcoming = apptList.Where(c => c.Status == (int)AppointmentStatus.Confirmed).Count(),
                 totalPast = apptList.Where(c => passApptStatus.Contains(c.Status)).Count(),

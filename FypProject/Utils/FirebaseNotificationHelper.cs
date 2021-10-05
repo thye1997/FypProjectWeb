@@ -17,16 +17,16 @@ namespace FypProject.Utils
 {
     public class FirebaseNotificationHelper
     {
-        private readonly FirebaseMessaging messaging;
-        private FirebaseApp app;
-        private readonly IServiceProvider serviceProvider;
+        private readonly FirebaseMessaging _messaging;
+        private FirebaseApp _app;
+        private readonly IServiceProvider _serviceProvider;
         public FirebaseNotificationHelper(IServiceProvider serviceProvider)
         {
-            this.serviceProvider = serviceProvider;
-            app = FirebaseApp.Create(             
+            this._serviceProvider = serviceProvider;
+            _app = FirebaseApp.Create(             
                 new AppOptions() { Credential = GoogleCredential.FromFile("serviceKey.json") });
             //app = FirebaseApp.Create(new AppOptions() { Credential = GoogleCredential.FromFile("serviceKey.json").CreateScoped("https://www.googleapis.com/auth/firebase.messaging") });
-            messaging = FirebaseMessaging.GetMessaging(app);            
+            _messaging = FirebaseMessaging.GetMessaging(_app);            
         }
         private Message CreateNotification(string token, Notification obj)
         {       
@@ -49,11 +49,11 @@ namespace FypProject.Utils
                 {
                     try
                     {
-                        var result = await messaging.SendAsync(CreateNotification(n.FirebaseToken, obj));
+                        var result = await _messaging.SendAsync(CreateNotification(n.FirebaseToken, obj));
                     }
                     catch(Exception e)
                     {   //catch token not registered anymore (probably uninstalled by users)
-                        using (var scoped = serviceProvider.CreateScope())
+                        using (var scoped = _serviceProvider.CreateScope())
                         {    
                             var accountRepository = scoped.ServiceProvider.GetRequiredService<IGenericRepository<Account>>();
                             var account= accountRepository.Where(c => c.Id == n.Id).FirstOrDefault();
@@ -83,11 +83,11 @@ namespace FypProject.Utils
                 {
                     try
                     {
-                        var result = await messaging.SendAsync(CreateRescheduleNotification(viewModel, content));
+                        var result = await _messaging.SendAsync(CreateRescheduleNotification(viewModel, content));
                     }
                     catch (Exception e)
                     {   //catch token not registered anymore (probably uninstalled by users)
-                        using (var scoped = serviceProvider.CreateScope())
+                        using (var scoped = _serviceProvider.CreateScope())
                         {
                             var accountRepository = scoped.ServiceProvider.GetRequiredService<IGenericRepository<Account>>();
                             var account = accountRepository.Where(c => c.Id == viewModel.Id).FirstOrDefault();
@@ -101,7 +101,7 @@ namespace FypProject.Utils
         private Message CreatePushReminder(ReminderPushNotificationViewModel viewModel)
         {
             string content = $"Your scheduled appointment will be on tomorrow {viewModel.slot}";
-            using(var scoped = serviceProvider.CreateScope())
+            using(var scoped = _serviceProvider.CreateScope())
             {
                 var reminderRepository = scoped.ServiceProvider.GetRequiredService<IGenericRepository<Reminder>>();
                 reminderRepository.Add(new Reminder
@@ -128,11 +128,11 @@ namespace FypProject.Utils
                 try
                 {
                     Debug.WriteLine("Push notification sent");
-                    var result = await messaging.SendAsync(CreatePushReminder(n));
+                    var result = await _messaging.SendAsync(CreatePushReminder(n));
                 }
                 catch (Exception e)
                 {   //catch token not registered anymore (probably uninstalled by users)
-                    using (var scoped = serviceProvider.CreateScope())
+                    using (var scoped = _serviceProvider.CreateScope())
                     {
                         var accountRepository = scoped.ServiceProvider.GetRequiredService<IGenericRepository<Account>>();
                         var account = accountRepository.Where(c => c.Id == n.Id).FirstOrDefault();

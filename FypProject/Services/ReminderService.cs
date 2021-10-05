@@ -13,12 +13,12 @@ namespace FypProject.Services
 {
     public class ReminderService : BaseService
     {
-        private readonly IServiceProvider serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
         public ReminderService(IServiceProvider serviceProvider) :
             base(@"0 0 * * *", TimeZoneInfo.Local)
             //base(@"* * * * * *", TimeZoneInfo.Local)
         {
-            this.serviceProvider = serviceProvider;
+            _serviceProvider = serviceProvider;
         }
        
         public override async Task StartAsync(CancellationToken cancellationToken)
@@ -30,7 +30,7 @@ namespace FypProject.Services
         public override async Task DoWork(CancellationToken cancellationToken)
         {
             Debug.WriteLine("This job is running again");   
-            using (var scope = serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateScope())
             {
               await  Task.Run(() =>
                 {
