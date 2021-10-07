@@ -91,7 +91,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                var dataList = _medicalHistoryService.RetrieveMedicalHistoryListById(Id).AsQueryable();
+                var dataList = _medicalHistoryService.RetrieveMedicalHistoryListById(Id).AsQueryable();  //TODO: modify to skip() and tak()
                 return this.DataTableResult<MedicalHistoryListViewModel,MedicalHistory>(dict, dataList, orderBy:c=> DateTime.Parse(c.Date));
             }
             catch (Exception e)
@@ -140,21 +140,5 @@ namespace FypProject.Controllers
                return SetError(ex);
             }
         }
-    }
-    class PatientUserCustomData
-    {
-        public int customId { set; get; }
-        public int Id { set; get; }
-        public string fullName { set; get; }
-        public string NRIC { set; get; }
-        public string Gender { set; get; }
-        public string phoneNumber { set; get; }
-
-    }
-    class MedHistoryCustomData
-    {
-        public int customId { set; get; }
-        public int Id { set; get; }
-        public string Description { set; get; }
     }
 }

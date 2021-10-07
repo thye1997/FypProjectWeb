@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using FypProject.Config;
 using FypProject.Models;
@@ -32,48 +34,56 @@ namespace FypProject.Services
 
         public List<MedicalHistoryListViewModel> RetrieveMedicalHistoryListById(int Id)
         {
-            var historyList = _apptRepository.Where(c => c.userId == Id && c.Status == (int)SystemData.AppointmentStatus.Completed).ToList();
-            List<MedicalHistoryListViewModel> medHistoryList = new List<MedicalHistoryListViewModel>();
-            if(historyList.Count > 0)
-            {   int count = 0;
-                foreach (var n in historyList)
-                { count += 1;
-                    medHistoryList.Add(new MedicalHistoryListViewModel
-                    {
-                        Id = count,
-                        Date = n.Date,
-                        Slot = n.StartTime + " - " + n.EndTime,
-                        Service = _serviceRepository.Where(c => c.Id == n.serviceId).FirstOrDefault().serviceName,
-                        Result = !string.IsNullOrEmpty(n.Result) ? n.Result : "-",
-                        FormattedMedicalPrescription = FormattedMedicalPrescription(n.Id),
-                        DoctorName = _sysUserRepository.Where(c=>c.Id == n.doctorId).FirstOrDefault()?.Name,
-                    });
-                }
-                return medHistoryList;
-            }
-            else
+            //var historyList = _apptRepository.Where(c => c.userId == Id && c.Status == (int)SystemData.AppointmentStatus.Completed).ToList();
+            var appointment = _apptRepository.Where(c => c.userId == Id && c.Status == (int)SystemData.AppointmentStatus.Completed);
+            var service = _serviceRepository.ToQueryable();
+            var sysUser = _sysUserRepository.ToQueryable();
+            var medPrescription = _medPrescriptionRepository.ToQueryable();
+            var medicine = _medicineRepository.ToQueryable();
+
+            try
             {
-                return medHistoryList;
+                var result = from a in appointment
+                             join s in service on a.serviceId equals s.Id
+                             join su in sysUser on a.doctorId equals su.Id
+                             select new MedicalHistoryListViewModel
+                             {
+                                 Id = a.Id,
+                                 Date = a.Date,
+                                 Slot = a.StartTime + " - " + a.EndTime,
+                                 Service = s.serviceName,
+                                 Result = !string.IsNullOrEmpty(a.Result) ? a.Result : "-",
+                                 FormattedMedicalPrescription = "",
+                                 DoctorName = su.Name,
+                             };
+               var dataList = result.ToList();
+                foreach(var n in dataList)
+                {
+                    n.FormattedMedicalPrescription = GetMedicinePrescriptionByAppointmentId(n.Id);
+                }
+                return dataList;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                return null;
             }
         }
-
-        public string FormattedMedicalPrescription(int apptId)
+        public string GetMedicinePrescriptionByAppointmentId(int apptId)
         {
-            var medPrescList = _medPrescriptionRepository.Where(c => c.apptId == apptId).ToList();
-            string formattedPrescription =null;
-            if(medPrescList.Count > 0)
+            var medPrescription = _medPrescriptionRepository.Where(c=>c.apptId == apptId).ToList();
+            var medicine = _medicineRepository.ToQueryable();
+            var stringBuilder = new StringBuilder();
+            if(medPrescription.Count > 0)
             {
-                foreach(var n in medPrescList)
+                foreach (var n in medPrescription)
                 {
-                    formattedPrescription += _medicineRepository.Where(c => c.Id == n.medId).FirstOrDefault().medName +"-"+n.Description + "/n"; // TODO: use better way to concate string
+                    stringBuilder.Append(_medicineRepository.Where(c => c.Id == n.medId).FirstOrDefault().medName + "-" + n.Description + "/n");
                 }
-                return formattedPrescription;
+                return stringBuilder.ToString();
             }
-            else
-            {
-                return "-";
-            }
-
+            
+            return "-";
         }
     }
 }

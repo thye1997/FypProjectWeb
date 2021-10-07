@@ -24,8 +24,6 @@ namespace FypProject
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
-
-        
+                });     
     }
 }
