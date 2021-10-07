@@ -43,9 +43,11 @@ namespace FypProject.Services
 
             try
             {
-                var result = from a in appointment
+                var result = (from a in appointment
                              join s in service on a.serviceId equals s.Id
                              join su in sysUser on a.doctorId equals su.Id
+                             //from mL in a.medicalPrescription
+                             //join m in medicine on mL.medId equals m.Id into mLm
                              select new MedicalHistoryListViewModel
                              {
                                  Id = a.Id,
@@ -55,13 +57,13 @@ namespace FypProject.Services
                                  Result = !string.IsNullOrEmpty(a.Result) ? a.Result : "-",
                                  FormattedMedicalPrescription = "",
                                  DoctorName = su.Name,
-                             };
-               var dataList = result.ToList();
-                foreach(var n in dataList)
+                             }).ToList();
+               //var dataList = result.ToList();
+                foreach(var n in result)
                 {
                     n.FormattedMedicalPrescription = GetMedicinePrescriptionByAppointmentId(n.Id);
                 }
-                return dataList;
+                return result;
             }
             catch (Exception ex)
             {
@@ -85,5 +87,6 @@ namespace FypProject.Services
             
             return "-";
         }
+
     }
 }
