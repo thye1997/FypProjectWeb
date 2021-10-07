@@ -20,7 +20,7 @@ namespace FypProject.Models
         public bool isActive { set; get; } = true;
     }
 
-    public class MedicalPrescriptions : IBusinessEntity
+    public class MedicalPrescription : IBusinessEntity
     {
         public int Id { set; get; }
         public string Description { set; get; }
@@ -30,18 +30,6 @@ namespace FypProject.Models
         public Medicine medicine { set; get; }
         [ForeignKey("apptId")]
         public Appointment appointment { set; get; }
-
-    }
-    public class MedicalPrescription : IBusinessEntity
-    {
-        public int Id { set; get; }
-        public string Description { set; get; }
-        public int medId { set; get; }
-        public Medicine medicine { set; get; }
-        public int apptId { set; get; }
-        public Appointment appointment { set; get; }
-        public int userId { set; get; }
-        public User user { set; get; }
 
     }
 }

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.AspNetCore.Identity;
 using FypProject.Models.DBContext;
+using Microsoft.Extensions.Logging;
 
 namespace FypProject
 {

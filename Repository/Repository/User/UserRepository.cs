@@ -21,11 +21,11 @@ namespace FypProject.Repository
             bool isDigitPresent = searchValue.Any(c => char.IsDigit(c)); /// check if string contain value
             if (isDigitPresent)
             {
-                user =_dbContexts.Users.Where(c => c.NRIC == searchValue).ToList(); 
+                user =_dbContexts.User.Where(c => c.NRIC == searchValue).ToList(); 
             }
             else
             {
-                user = _dbContexts.Users.Where(c => c.FullName.ToLower() == searchValue.ToLower()).ToList();
+                user = _dbContexts.User.Where(c => c.FullName.ToLower() == searchValue.ToLower()).ToList();
             }
             return user;
         }
@@ -33,7 +33,7 @@ namespace FypProject.Repository
 
         public User Find(int Id)
         {
-            User user = _dbContexts.Users.Find(Id);
+            User user = _dbContexts.User.Find(Id);
             if(user != null)
             {
                 return user;
@@ -45,7 +45,7 @@ namespace FypProject.Repository
         public bool FindByNRIC(User obj)
         {
             User user = new User();
-            user = _dbContexts.Users.Where(c => c.NRIC == obj.NRIC).FirstOrDefault();
+            user = _dbContexts.User.Where(c => c.NRIC == obj.NRIC).FirstOrDefault();
 
             if (user != null)
             {

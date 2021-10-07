@@ -67,6 +67,7 @@ namespace FypProject.Services
         public List<ReminderListViewModel> GetReminderList(int accId)
         {
             var accProfileId = _accProfileRepository.Where(c => c.accountId == accId).Select(c=>c.userId).ToList();
+
             List<ReminderListViewModel> reminderLists = new List<ReminderListViewModel>();
 
             if (accProfileId.Count > 0)
@@ -107,8 +108,24 @@ namespace FypProject.Services
             List<ReminderPushNotificationViewModel> notificationReminder = new List<ReminderPushNotificationViewModel>();
             if (reminderList.Count>0)
             {  foreach(var n in reminderList)
-                {   
-                    var accountBindList = _accProfileRepository.Where(c => c.userId == n.userId).ToList();
+                {
+                    //var accountProfile = _accProfileRepository.Where(c => c.userId == n.userId);
+                   // var account = _accRepository.ToQueryable();
+                    //TODO: change flow
+                    /*var result = from ap in accountProfile
+                                 join a in account on ap.userId equals a.Id
+                                 where a.PushNotificationEnabled && !string.IsNullOrEmpty(a.FirebaseToken)
+                                 select new ReminderPushNotificationViewModel
+                                 {
+                                     Id = a.Id,
+                                     userId = n.userId,
+                                     date = n.Date,
+                                     slot = $"{n.StartTime}-{n.EndTime}",
+                                     title = "Appointment Reminder",
+                                     FirebaseToken = a.FirebaseToken,
+                                     sendDate = DateTime.Now.ToString("dd/MM/yyyy")
+                                 };*/
+                   var accountBindList = _accProfileRepository.Where(c => c.userId == n.userId).ToList();
                     if (accountBindList.Count >0)
                     {
                         foreach(var q in accountBindList)

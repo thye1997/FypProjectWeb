@@ -129,7 +129,7 @@ namespace FypProject.Services
 
         public int EditSlotDuration(int Id)
         {
-            var slotDuration = _slotDurationRepository.ToQueryable().ToList();
+            var slotDuration = _slotDurationRepository.ToQueryable();
             slotDuration.Where(c => c.Id == Id).FirstOrDefault().isActive = true;
             slotDuration.Where(c => c.Id != Id).FirstOrDefault().isActive = false;
             _slotDurationRepository.SaveChanges();

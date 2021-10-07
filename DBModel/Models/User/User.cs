@@ -16,7 +16,7 @@ namespace FypProject.Models
         public string PhoneNumber { get; set; }
         public List<MedicalHistory> medicalHistory { set; get; }
         public List<Appointment> appointment { set; get; }
-        public List<MedicalPrescriptions> medicalPrescription { set; get; }
+        public List<MedicalPrescription> medicalPrescription { set; get; }
         public List<AccountProfile> accountProfile { set; get; }
 
 

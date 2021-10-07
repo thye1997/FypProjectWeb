@@ -24,7 +24,7 @@ namespace FypProject.Services
         private readonly IUserRepository _userRepository;
         private readonly IGenericRepository<AccountProfile> _accProfileRepository;
         private readonly IGenericRepository<Service> _serviceRepository;
-        private readonly IGenericRepository<MedicalPrescriptions> _medPrescRepository;
+        private readonly IGenericRepository<MedicalPrescription> _medPrescRepository;
         private readonly IGenericRepository<QRCode> _qrRepository;
         private readonly IGenericRepository<Account> _accRepository;
         public AppointmentService(
@@ -32,7 +32,7 @@ namespace FypProject.Services
         IAppointmentRepository apptRepository,
         IUserRepository userRepository,
         IGenericRepository<Service> serviceRepository,
-        IGenericRepository<MedicalPrescriptions> medPrescRepository,
+        IGenericRepository<MedicalPrescription> medPrescRepository,
         IGenericRepository<AccountProfile> accProfileRepository,
         IGenericRepository<QRCode> qrRepository,
         IGenericRepository<Account> accRepository
@@ -202,7 +202,7 @@ namespace FypProject.Services
         }
 
         public void AddAppointmentResult(MedicinePrescriptionViewModel viewModel)
-        { List<MedicalPrescriptions> medicalPrescriptions = new List<MedicalPrescriptions>();
+        { List<MedicalPrescription> medicalPrescriptions = new List<MedicalPrescription>();
             var appt = _apptRepository.Where(c => c.Id == viewModel.AppointmentId).FirstOrDefault();
            
             if(viewModel.PrescriptionList != null)
@@ -210,7 +210,7 @@ namespace FypProject.Services
                 foreach (var n in viewModel.PrescriptionList)
                 {
                     medicalPrescriptions.Add(
-                        new MedicalPrescriptions
+                        new MedicalPrescription
                         {
                             apptId = viewModel.AppointmentId,
                             medId = n.Id,
@@ -218,7 +218,7 @@ namespace FypProject.Services
                         }
                         );
                 }
-                medicalPrescriptions.ForEach(c => _medPrescRepository.Add(c)); // add each of medical prescription one by one
+                medicalPrescriptions.ForEach(c => _medPrescRepository.Add(c)); // TODO: only savechanges once after iterated through all
             }
             
             appt.Result = viewModel.result;
@@ -228,7 +228,7 @@ namespace FypProject.Services
         /**appointment api part*/
         public List<AppointmentData> AppointmentListData(AppointmentData obj)
         {
-            List<User> user = new List<User>();
+            //TODO: redo the flow
             List<int> profileId = new List<int>();
             var appointmentDataList = new List<AppointmentData>();
             _apptRepository.CheckNoShowAppointment();

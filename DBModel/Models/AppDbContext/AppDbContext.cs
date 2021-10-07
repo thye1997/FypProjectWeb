@@ -23,21 +23,19 @@ namespace FypProject.Models.DBContext
             optionsBuilder.UseSqlServer(@"Server=(LAPTOP-5T49C199)\MSSQLSERVER01;Database=FypProjectDB; User Id=sa_2; password=sa_2;");
         }*/
 
-        public DbSet<User> Users { set; get; }
-        public DbSet<Account> Accounts { set; get; }
-        public DbSet<AccountProfile> AccountProfiles { set; get; }
-        public DbSet<Appointment> appointments { get; set; }
-        public DbSet<MedicalHistory> MedicalHistorys { set; get; }
-        public DbSet<MedicalPrescription> MedicalPrescriptions { set; get; }
-        public DbSet<MedicalPrescriptions> MedicalPrescription { set; get; }
-
-        public DbSet<Service> Services { set; get; }
-        public DbSet<Medicine> Medicines { set; get; }
-        public DbSet<SystemUser> SystemUsers { set; get; }
-        public DbSet<OffDay> OffDays { set; get; }
-        public DbSet<SpecialHoliday> specialHolidays { set; get; }
-        public DbSet<TimeSlot> timeSlots { set; get; }
-        public DbSet<SlotDuration> slotDurations { set; get; }
+        public DbSet<User> User { set; get; }
+        public DbSet<Account> Account { set; get; }
+        public DbSet<AccountProfile> AccountProfile { set; get; }
+        public DbSet<Appointment> Appointment { get; set; }
+        public DbSet<MedicalHistory> MedicalHistory { set; get; }
+        public DbSet<MedicalPrescription> MedicalPrescription { set; get; }
+        public DbSet<Service> Service { set; get; }
+        public DbSet<Medicine> Medicine { set; get; }
+        public DbSet<SystemUser> SystemUser { set; get; }
+        public DbSet<OffDay> OffDay { set; get; }
+        public DbSet<SpecialHoliday> SpecialHoliday { set; get; }
+        public DbSet<TimeSlot> TimeSlot { set; get; }
+        public DbSet<SlotDuration> SlotDuration { set; get; }
         public DbSet<Notification> Notification { set; get; }
         public DbSet<QRCode> QRCode { set; get; }
         public DbSet<Reminder> Reminder { set; get; }

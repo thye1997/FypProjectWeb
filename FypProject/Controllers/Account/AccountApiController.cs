@@ -190,7 +190,7 @@ namespace FypProject.Controllers
         {
             try
             {
-                Debug.WriteLine("Profile list api called");
+                Debug.WriteLine($"Profile list api called {accId}");
                 var result = accountService.GetProfileList(accId);
                 return Ok(result);
             }

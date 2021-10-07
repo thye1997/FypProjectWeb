@@ -18,9 +18,9 @@ namespace FypProject.Repository
         }
         public IQueryable<AppointmentViewModel> GetAppointmentList(int[] apptStatus)
         {
-            var appointment = _dbContexts.appointments.AsQueryable();
-            IQueryable<User> user = _dbContexts.Users.AsQueryable();
-            IQueryable<Service> service = _dbContexts.Services.AsQueryable();
+            var appointment = _dbContexts.Appointment.AsQueryable();
+            IQueryable<User> user = _dbContexts.User.AsQueryable();
+            IQueryable<Service> service = _dbContexts.Service.AsQueryable();
 
             var result = from u in user
                          join appt in appointment on u.Id equals appt.userId where apptStatus.Contains(appt.Status)
@@ -47,16 +47,16 @@ namespace FypProject.Repository
         public AppointmentDetailViewModel GetAppointmentDetail(int Id)
         {
             var medPrescriptionList = MedPrescriptionList(Id);
-            var result = _dbContexts.appointments.Where(c => c.Id == Id)
+            var result = _dbContexts.Appointment.Where(c => c.Id == Id)
                         .Select(appt => new AppointmentDetailViewModel
                         {                         
                             Id = appt.Id,
                             UserId = appt.userId,
-                            FullName = _dbContexts.Users.Where(c=> c.Id == appt.userId).FirstOrDefault().FullName,
-                            PhoneNumber = _dbContexts.Users.Where(c => c.Id == appt.userId).FirstOrDefault().PhoneNumber,
-                            Gender = _dbContexts.Users.Where(c => c.Id == appt.userId).FirstOrDefault().Gender,
-                            NRIC = _dbContexts.Users.Where(c => c.Id == appt.userId).FirstOrDefault().NRIC,
-                            DOB = _dbContexts.Users.Where(c => c.Id == appt.userId).FirstOrDefault().DOB,
+                            FullName = _dbContexts.User.Where(c=> c.Id == appt.userId).FirstOrDefault().FullName,
+                            PhoneNumber = _dbContexts.User.Where(c => c.Id == appt.userId).FirstOrDefault().PhoneNumber,
+                            Gender = _dbContexts.User.Where(c => c.Id == appt.userId).FirstOrDefault().Gender,
+                            NRIC = _dbContexts.User.Where(c => c.Id == appt.userId).FirstOrDefault().NRIC,
+                            DOB = _dbContexts.User.Where(c => c.Id == appt.userId).FirstOrDefault().DOB,
                             ApptType = RestructApptType(appt.ApptType),
                             Date=appt.Date,
                             StartTime = appt.StartTime,
@@ -66,7 +66,7 @@ namespace FypProject.Repository
                             StatusString = RestructStatusName(appt.Status),
                             Note = appt.Note,
                             medicalPrescriptions = medPrescriptionList,
-                            Service = _dbContexts.Services.Where(c=>c.Id == appt.serviceId).FirstOrDefault().serviceName,
+                            Service = _dbContexts.Service.Where(c=>c.Id == appt.serviceId).FirstOrDefault().serviceName,
                             Result = appt.Result,
                             isCheckIn =TimeSlotHelper.ReturnCheckIn(appt.Date, appt.StartTime)
                         }).FirstOrDefault();
@@ -143,8 +143,8 @@ namespace FypProject.Repository
                 apptMedViewModel.Add(
                     new AppointmentMedicalPrescriptionViewModel
                     {
-                        medType = _dbContexts.Medicines.Where(c => c.Id == n.medId).FirstOrDefault().Type,
-                        medName = _dbContexts.Medicines.Where(c => c.Id == n.medId).FirstOrDefault().medName,
+                        medType = _dbContexts.Medicine.Where(c => c.Id == n.medId).FirstOrDefault().Type,
+                        medName = _dbContexts.Medicine.Where(c => c.Id == n.medId).FirstOrDefault().medName,
                         Description = n.Description
                     });
             }

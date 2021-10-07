@@ -23,7 +23,7 @@ namespace FypProject.Models
         public int Status { get; set; }
         public int userId { set; get; }
         public User user { set; get; }
-        public List<MedicalPrescriptions> medicalPrescription { set; get; }
+        public List<MedicalPrescription> medicalPrescription { set; get; }
         public bool isActive { get; set; } = true;
         public int? doctorId { set; get; }
         public SystemUser systemUser { set; get; }

@@ -7,6 +7,7 @@ using FypProject.ApiViewModel;
 using FypProject.Models;
 using FypProject.Utils;
 using FypProject.Repository;
+using FypProject.Models.DBContext;
 
 namespace FypProject.Services
 {
@@ -15,12 +16,14 @@ namespace FypProject.Services
         private readonly IUserRepository _userRepository;
         private readonly IGenericRepository<Account> _accRepository;
         private readonly IGenericRepository<AccountProfile> _accProfileRepository;
+        private readonly AppDbContext _appDbContext;
 
-        public AccountService(IUserRepository userRepository, IGenericRepository<Account> accRepository, IGenericRepository<AccountProfile> accProfileRepository)
+        public AccountService(IUserRepository userRepository, IGenericRepository<Account> accRepository, IGenericRepository<AccountProfile> accProfileRepository, AppDbContext appDbContext)
         {
             _userRepository = userRepository;
             _accRepository = accRepository;
             _accProfileRepository = accProfileRepository;
+            _appDbContext = appDbContext;
         }
         public GeneralResponse AccountRegister(AccountLoginRequest accountLoginRequest)
         {
@@ -206,10 +209,10 @@ namespace FypProject.Services
             if(addProfileRequest.ProfileId > 0)
             {
                var accProfile = (AccountProfile)null;
-               var accountExist = _accRepository.ToQueryable().Any(c=>c.Id == addProfileRequest.AccId); // fast check if account exist
-               var profile = _userRepository.Where(c => c.Id == addProfileRequest.ProfileId).FirstOrDefault();
+               //var accountExist = _accRepository.ToQueryable().Any(c=>c.Id == addProfileRequest.AccId); // fast check if account exist
+               //var profile = _userRepository.Where(c => c.Id == addProfileRequest.ProfileId).FirstOrDefault();
                var accProfileHasDefault = _accProfileRepository.ToQueryable().Any(c => c.accountId == addProfileRequest.AccId && c.isDefault);
-                if (profile != null)
+                if (_userRepository.ToQueryable().Any(c => c.Id == addProfileRequest.ProfileId))
                 {   
                     //Debug.WriteLine("account id not empty=> "+ account.Id);
                     if (accProfileHasDefault == false) // first profile added after account created
@@ -217,7 +220,7 @@ namespace FypProject.Services
                         accProfile = new AccountProfile
                         {
                             accountId = addProfileRequest.AccId,
-                            userId = profile.Id,
+                            userId = addProfileRequest.ProfileId,
                             Relationship = addProfileRequest.Relationship,
                             isDefault = true 
                         };
@@ -227,18 +230,20 @@ namespace FypProject.Services
                         accProfile = new AccountProfile
                         {
                             accountId = addProfileRequest.AccId,
-                            userId = profile.Id,
+                            userId = addProfileRequest.ProfileId,
                             Relationship = addProfileRequest.Relationship,
                             isDefault = false
                         };
                     }
                     _accProfileRepository.Add(accProfile);
+
                     return new AddProfileResponse
                     {
                         isSuccess = true,
                         message = "Profile added successfully."
                     };
                 }
+
                 return new AddProfileResponse
                 {
                     isSuccess = false,
@@ -333,26 +338,20 @@ namespace FypProject.Services
 
         public List<ProfileListResponse> GetProfileList(int accId)
         {
-            List<ProfileListResponse> profileList = new List<ProfileListResponse>(); 
-            var profile = _accProfileRepository.Where(c=>c.accountId == accId).ToList();
-            if (profile.Count > 0)
-            {
-                foreach(var n in profile)
-                {
-                    profileList.Add(new ProfileListResponse
-                    {   Id = n.Id,
-                        ProfileId = n.userId,
-                        FullName = _userRepository.Where(c => c.Id == n.userId).FirstOrDefault().FullName,
-                        Relationship = n.Relationship,
-                        IsDefault = n.isDefault
-                    });
-                }
-                return profileList;
-            }
-            else
-            {
-                return null;
-            }
+            var accProfile = _accProfileRepository.ToQueryable();
+            var user = _userRepository.ToQueryable();
+            var profileList = from a in accProfile
+                              join u in user on a.userId equals u.Id
+                              where a.accountId == accId
+                         select new ProfileListResponse
+                         {
+                             Id = a.Id,
+                             ProfileId = a.userId,
+                             FullName = u.FullName,
+                             Relationship = a.Relationship,
+                             IsDefault = a.isDefault
+                         };
+                return profileList.ToList();            
         }
         public GeneralResponse DeleteProfile(int Id)
         {
@@ -410,29 +409,23 @@ namespace FypProject.Services
 
         public DefaultProfileData GetDefaultProfileData(DefaultProfileData obj)
         {
-            var defaultProfileId = _accProfileRepository.Where(c => c.accountId == obj.AccId && c.isDefault).FirstOrDefault().userId;
-            if(defaultProfileId >0)
-            {
-                var defaultProfile = _userRepository.Where(c => c.Id == defaultProfileId).FirstOrDefault();
-                if (defaultProfile != null)
-                {
-                    return new DefaultProfileData
-                    {
-                        AccountRegistered = _accRepository.Where(c => c.Id == obj.AccId).FirstOrDefault().EmailAddress,
-                        ProfileId = defaultProfileId,
-                        NRIC = defaultProfile.NRIC,
-                        FullName = defaultProfile.FullName,
-                        PhoneNumber = defaultProfile.PhoneNumber,
-                        DOB = defaultProfile.DOB,
-                        Gender = defaultProfile.Gender,
-                    };
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            return null;
+            var accProfile = _accProfileRepository.ToQueryable();
+            var user = _userRepository.ToQueryable();
+            var account = _accRepository.ToQueryable();
+            var result = from u in user
+                         join ap in accProfile on u.Id equals ap.userId
+                         where ap.accountId == obj.AccId && ap.isDefault
+                         select new DefaultProfileData
+                         {
+                             AccountRegistered = account.Where(c=>c.Id == obj.AccId).Select(account => account.EmailAddress).FirstOrDefault(),
+                             ProfileId = ap.userId,
+                             NRIC = u.NRIC,
+                             FullName = u.FullName,
+                             PhoneNumber = u.PhoneNumber,
+                             DOB = u.DOB,
+                             Gender = u.Gender,
+                         };
+            return result.FirstOrDefault();
         }
        
         public DefaultProfileData UpdateDefaultProfileData(DefaultProfileData obj)

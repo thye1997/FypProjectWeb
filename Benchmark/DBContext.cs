@@ -22,9 +22,9 @@ namespace Benchmarks
             int[] apptStatus = new int[] { 0,2,3,4,301 };
             using (var _dbContexts = new BloggingContext())
             {
-                var appointment = _dbContexts.appointments.AsQueryable();
-                IQueryable<User> user = _dbContexts.Users.AsQueryable();
-                IQueryable<Service> service = _dbContexts.Services.AsQueryable();
+                var appointment = _dbContexts.Appointment.AsQueryable();
+                IQueryable<User> user = _dbContexts.User.AsQueryable();
+                IQueryable<Service> service = _dbContexts.Service.AsQueryable();
 
                 var result = from u in user
                              join appt in appointment on u.Id equals appt.userId
@@ -64,7 +64,7 @@ namespace Benchmarks
             int[] apptStatus = new int[] { 0, 2, 3, 4, 301 };
             using (var _dbContexts = new BloggingContext())
             {
-                var result = _dbContexts.appointments.Where(c => apptStatus.Contains(c.Status))
+                var result = _dbContexts.Appointment.Where(c => apptStatus.Contains(c.Status))
                           .Select(appt => new AppointmentViewModel
                           {
                               Id = appt.Id,
@@ -72,12 +72,12 @@ namespace Benchmarks
                               ApptType = RestructApptType(appt.ApptType),
                               Date = appt.Date,
                               Slot = appt.StartTime + "-" + appt.EndTime,
-                              Service = _dbContexts.Services.Where(c => c.Id == appt.serviceId).FirstOrDefault().serviceName,
+                              Service = _dbContexts.Service.Where(c => c.Id == appt.serviceId).FirstOrDefault().serviceName,
                               StartTime = appt.StartTime,
                               EndTime = "-" + appt.EndTime,
-                              FullName = _dbContexts.Users.Where(c => c.Id == appt.userId).FirstOrDefault().FullName,
-                              NRIC = _dbContexts.Users.Where(c => c.Id == appt.userId).FirstOrDefault().NRIC,
-                              PhoneNumber = _dbContexts.Users.Where(c => c.Id == appt.userId).FirstOrDefault().PhoneNumber,
+                              FullName = _dbContexts.User.Where(c => c.Id == appt.userId).FirstOrDefault().FullName,
+                              NRIC = _dbContexts.User.Where(c => c.Id == appt.userId).FirstOrDefault().NRIC,
+                              PhoneNumber = _dbContexts.User.Where(c => c.Id == appt.userId).FirstOrDefault().PhoneNumber,
                               Status = RestructStatusName(appt.Status),
                               checkIn = TimeSlotHelper.ReturnCheckIn(appt.Date, appt.StartTime),
                           }
@@ -133,21 +133,19 @@ namespace Benchmarks
 
         public class BloggingContext : DbContext
         {
-            public DbSet<User> Users { set; get; }
-            public DbSet<Account> Accounts { set; get; }
-            public DbSet<AccountProfile> AccountProfiles { set; get; }
-            public DbSet<Appointment> appointments { get; set; }
-            public DbSet<MedicalHistory> MedicalHistorys { set; get; }
-            public DbSet<MedicalPrescription> MedicalPrescriptions { set; get; }
-            public DbSet<MedicalPrescriptions> MedicalPrescription { set; get; }
-
-            public DbSet<Service> Services { set; get; }
-            public DbSet<Medicine> Medicines { set; get; }
-            public DbSet<SystemUser> SystemUsers { set; get; }
-            public DbSet<OffDay> OffDays { set; get; }
-            public DbSet<SpecialHoliday> specialHolidays { set; get; }
-            public DbSet<TimeSlot> timeSlots { set; get; }
-            public DbSet<SlotDuration> slotDurations { set; get; }
+            public DbSet<User> User { set; get; }
+            public DbSet<Account> Account { set; get; }
+            public DbSet<AccountProfile> AccountProfile { set; get; }
+            public DbSet<Appointment> Appointment { get; set; }
+            public DbSet<MedicalHistory> MedicalHistory { set; get; }
+            public DbSet<MedicalPrescription> MedicalPrescription { set; get; }
+            public DbSet<Service> Service { set; get; }
+            public DbSet<Medicine> Medicine { set; get; }
+            public DbSet<SystemUser> SystemUser { set; get; }
+            public DbSet<OffDay> OffDay { set; get; }
+            public DbSet<SpecialHoliday> SpecialHoliday { set; get; }
+            public DbSet<TimeSlot> TimeSlot { set; get; }
+            public DbSet<SlotDuration> SlotDuration { set; get; }
             public DbSet<Notification> Notification { set; get; }
             public DbSet<QRCode> QRCode { set; get; }
             public DbSet<Reminder> Reminder { set; get; }
