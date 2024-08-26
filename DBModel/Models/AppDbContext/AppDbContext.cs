@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 
 namespace FypProject.Models.DBContext
@@ -42,8 +43,15 @@ namespace FypProject.Models.DBContext
         public DbSet<ServiceType> ServiceType { set; get; }
 
 
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            foreach (IMutableEntityType entity in modelBuilder.Model.GetEntityTypes())
+            {
+                entity.SetTableName(entity.DisplayName());
+            }
+
             modelBuilder.Entity<Appointment>()
                 .HasOne(c => c.systemUser)
                 .WithMany(b => b.appointments)

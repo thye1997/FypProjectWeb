@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FypProject.Controllers
 {
-    [Authorize(AuthenticationSchemes =authenticationSchemes)]
+    [Authorize]
     public class DashboardController : BasicController
     {
         protected override string pageName { get; set; }
@@ -23,6 +23,7 @@ namespace FypProject.Controllers
 
         public IActionResult Index()
         {
+            if(!User.Identity.IsAuthenticated) { return View("Error"); }
             return View(dashboardService.RetrieveWebApptDashboardDataCount());                         
         }
     }

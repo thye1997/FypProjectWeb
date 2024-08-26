@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace FypProject.Migrations
 {
     [DbContext(typeof(AppDbContext))]
@@ -15,16 +17,18 @@ namespace FypProject.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.3")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("FypProject.Models.Account", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("AppointmentPushReminderEnabled")
                         .HasColumnType("bit");
@@ -49,15 +53,16 @@ namespace FypProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Account");
                 });
 
             modelBuilder.Entity("FypProject.Models.AccountProfile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Relationship")
                         .HasColumnType("nvarchar(max)");
@@ -77,15 +82,16 @@ namespace FypProject.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("AccountProfiles");
+                    b.ToTable("AccountProfile");
                 });
 
             modelBuilder.Entity("FypProject.Models.Appointment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("ApptType")
                         .HasColumnType("int");
@@ -131,15 +137,16 @@ namespace FypProject.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("appointments");
+                    b.ToTable("Appointment");
                 });
 
             modelBuilder.Entity("FypProject.Models.MedicalHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -151,51 +158,16 @@ namespace FypProject.Migrations
 
                     b.HasIndex("userId");
 
-                    b.ToTable("MedicalHistorys");
+                    b.ToTable("MedicalHistory");
                 });
 
             modelBuilder.Entity("FypProject.Models.MedicalPrescription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("appointmentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("apptId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("medId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("medicineId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("userId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("appointmentId");
-
-                    b.HasIndex("medicineId");
-
-                    b.HasIndex("userId");
-
-                    b.ToTable("MedicalPrescriptions");
-                });
-
-            modelBuilder.Entity("FypProject.Models.MedicalPrescriptions", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -224,8 +196,9 @@ namespace FypProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -246,15 +219,16 @@ namespace FypProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Medicines");
+                    b.ToTable("Medicine");
                 });
 
             modelBuilder.Entity("FypProject.Models.Notification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -280,8 +254,9 @@ namespace FypProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Day")
                         .HasColumnType("nvarchar(max)");
@@ -291,7 +266,7 @@ namespace FypProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OffDays");
+                    b.ToTable("OffDay");
 
                     b.HasData(
                         new
@@ -342,8 +317,9 @@ namespace FypProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("FileName")
                         .HasColumnType("nvarchar(max)");
@@ -369,8 +345,9 @@ namespace FypProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -392,8 +369,9 @@ namespace FypProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("createdBy")
                         .HasColumnType("nvarchar(max)");
@@ -418,15 +396,16 @@ namespace FypProject.Migrations
 
                     b.HasIndex("serviceTypeId");
 
-                    b.ToTable("Services");
+                    b.ToTable("Service");
                 });
 
             modelBuilder.Entity("FypProject.Models.ServiceType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("TypeName")
                         .HasColumnType("nvarchar(max)");
@@ -457,8 +436,9 @@ namespace FypProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("isActive")
                         .HasColumnType("bit");
@@ -468,7 +448,7 @@ namespace FypProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("slotDurations");
+                    b.ToTable("SlotDuration");
 
                     b.HasData(
                         new
@@ -489,8 +469,9 @@ namespace FypProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Date")
                         .HasColumnType("nvarchar(max)");
@@ -500,15 +481,16 @@ namespace FypProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("specialHolidays");
+                    b.ToTable("SpecialHoliday");
                 });
 
             modelBuilder.Entity("FypProject.Models.SystemUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -530,13 +512,13 @@ namespace FypProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SystemUsers");
+                    b.ToTable("SystemUser");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Password = "$2a$11$R3Th0j8lSBW4Mh0sM8WmhOl1fB/0svq/lC8qkgdHmkaMfEkno50Dm",
+                            Password = "$2a$11$a5MuzhMJrrexpth/5cHRRumWE2qeWgPBsI8YgpPuynQ1KNfMr9LI6",
                             Role = "Admin",
                             createdBy = "Admin",
                             createdOn = "18/08/2021 12:24 AM",
@@ -548,8 +530,9 @@ namespace FypProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("End")
                         .HasColumnType("nvarchar(max)");
@@ -562,7 +545,7 @@ namespace FypProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("timeSlots");
+                    b.ToTable("TimeSlot");
 
                     b.HasData(
                         new
@@ -592,8 +575,9 @@ namespace FypProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("DOB")
                         .HasColumnType("nvarchar(max)");
@@ -612,7 +596,7 @@ namespace FypProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("FypProject.Models.AccountProfile", b =>
@@ -671,29 +655,6 @@ namespace FypProject.Migrations
                 });
 
             modelBuilder.Entity("FypProject.Models.MedicalPrescription", b =>
-                {
-                    b.HasOne("FypProject.Models.Appointment", "appointment")
-                        .WithMany()
-                        .HasForeignKey("appointmentId");
-
-                    b.HasOne("FypProject.Models.Medicine", "medicine")
-                        .WithMany()
-                        .HasForeignKey("medicineId");
-
-                    b.HasOne("FypProject.Models.User", "user")
-                        .WithMany()
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("appointment");
-
-                    b.Navigation("medicine");
-
-                    b.Navigation("user");
-                });
-
-            modelBuilder.Entity("FypProject.Models.MedicalPrescriptions", b =>
                 {
                     b.HasOne("FypProject.Models.User", null)
                         .WithMany("medicalPrescription")

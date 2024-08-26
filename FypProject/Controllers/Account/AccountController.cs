@@ -37,6 +37,7 @@ namespace FypProject.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LoginUser(Login model, [FromQuery] string ReturnUrl)
         {
+            if(User.Identity.IsAuthenticated) return RedirectToAction("Index", "Dashboard");
 
             if (ModelState.IsValid)
             {
@@ -46,63 +47,62 @@ namespace FypProject.Controllers
                     userName = model.UserName,
                     Password = model.Password
                 };
-                var user = sysUserRepository.Where(c => c.userName == model.UserName).FirstOrDefault();
-                if (user != null)
+                try
                 {
-                    if (BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
+                    var user = sysUserRepository.Where(c => c.userName == model.UserName).FirstOrDefault();
+                    if (user != null)
                     {
-
-                        var claims = new List<Claim>
+                        if (BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
                         {
-                        new Claim(ClaimTypes.Name,user.userName),
-                        new Claim("FullName", user.Name),
-                        new Claim("Id", user.Id.ToString()),
-                        new Claim(ClaimTypes.Role, user.Role),
+
+                            var claims = new List<Claim>
+                        {
+                        new Claim(ClaimTypes.Name,user?.userName),
+                        new Claim("FullName", string.IsNullOrEmpty(user.Name) ? "Admin" : user.Name),
+                        new Claim("Id", user?.Id.ToString()),
+                        new Claim(ClaimTypes.Role, user?.Role),
                         };
 
-                        var claimsIdentity = new ClaimsIdentity(
-                            claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                            var claimsIdentity = new ClaimsIdentity(
+                                claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                        var authProperties = new AuthenticationProperties
-                        {
+                            await HttpContext.SignInAsync(
+                                    CookieAuthenticationDefaults.AuthenticationScheme,
+                                    new ClaimsPrincipal(claimsIdentity));
 
-                            RedirectUri = "/Dashboard/Index",
-
-                        };
-                        await HttpContext.SignInAsync(
-                                CookieAuthenticationDefaults.AuthenticationScheme,
-                                new ClaimsPrincipal(claimsIdentity),
-                                authProperties);
-                        /*if (!string.IsNullOrEmpty(ReturnUrl))
-                        {
-
-                            if (Url.IsLocalUrl(ReturnUrl))
+                            if (!string.IsNullOrEmpty(ReturnUrl))
                             {
-                                return RedirectToAction("Index", "Dashboard");
-
+                                if (Url.IsLocalUrl(ReturnUrl))
+                                { return Redirect(ReturnUrl);}
+                                else
+                                {
+                                    return RedirectToAction("Index", "Dashboard");
+                                }
                             }
                             else
                             {
-                                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                                return RedirectToAction(nameof(AccountController.AccessDenied), "Account");
-
+                                return RedirectToAction("Index", "Dashboard");
                             }
-                        }*/
-
-                        return RedirectToAction("Index", "Dashboard");
+                        }
+                        else
+                        {
+                            ViewBag.loginErr = "invalid";
+                            return View("Login");
+                        }
                     }
                     else
                     {
+                        //if model state is valid but credential not valid, return to login page
                         ViewBag.loginErr = "invalid";
                         return View("Login");
                     }
                 }
-                else
+                catch(Exception ex)
                 {
-                    //if model state is valid but credential not valid, return to login page
-                    ViewBag.loginErr = "invalid";
-                    return View("Login");
+                    Debug.WriteLine(ex.ToString());
+                    throw ex;
                 }
+                
             }
             else
             {   //if model state not valid, return to login page

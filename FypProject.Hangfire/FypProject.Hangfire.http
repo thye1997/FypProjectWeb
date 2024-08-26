@@ -1,0 +1,6 @@
+@FypProject.Hangfire_HostAddress = http://localhost:5137
+
+GET {{FypProject.Hangfire_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

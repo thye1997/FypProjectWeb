@@ -12,6 +12,7 @@ using FypProject.Utils;
 using FypProject.ViewModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using FypProject.Repository;
@@ -46,7 +47,7 @@ namespace FypProject.Controllers
 
         public IActionResult AppointmentSchedule()
         { var apptSchedule = _apptScheduleService.RetrieveApptSchedule();
-            
+
             return View(apptSchedulePageName, apptSchedule);
         }
 

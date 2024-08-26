@@ -4,3 +4,5 @@
 /Benchmark/obj
 /FypProject/obj
 /.vs
+/FypProject.Hangfire/appsettings.json
+/FypProject/appsettings.json

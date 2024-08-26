@@ -40,12 +40,9 @@ namespace FypProject
             services.DependencyInjection(serviceMessage);
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("FypProject")));
-            //services.AddIdentity<SystemUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
-            //services.AddScoped<CustomAuthFilter>();
             services.CookiesAuthConfig();
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            //services.Configure<List<Login>>(Configuration.GetSection("Users"));
             services.AddHttpClient();          
         }
 
@@ -59,19 +56,11 @@ namespace FypProject
             }
             else
             {
-               // app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            //var list = new List<string> { "/css", "/js", "/lib", "/favicon.ico" };
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-            /*app.UseWhen( //just testing 
-                context => list.Any(s => context.Request.Path.StartsWithSegments(s)),
-                appbuilder =>
-                appbuilder.UseStaticFiles()
-                );*/
 
             app.UseRouting();
             app.UseAuthentication();
