@@ -6,3 +6,5 @@
 /.vs
 /FypProject.Hangfire/appsettings.json
 /FypProject/appsettings.json
+/FypProject/appsettings.Development.json
+/FypProject.Hangfire/appsettings.Development.json
